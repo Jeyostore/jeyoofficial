@@ -270,7 +270,7 @@ const SectionWrapper = ({ children, id, className = '' }) => { // Tambahkan clas
     const isVisible = useSectionVisibility(sectionRef); // Menggunakan hook untuk deteksi visibilitas
 
     return (
-        <section id={id} ref={sectionRef} className={`py-16 sm:py-24 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}> {/* Tambahkan className */}
+        <section id={id} ref={sectionRef} className={`py-12 sm:py-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}> {/* Mengurangi padding vertikal */}
             {children}
         </section>
     );
@@ -312,14 +312,14 @@ const HeroSection = ({ hero }) => {
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
         {/* Judul Hero dengan animasi pembukaan dan parallax */}
         <h1
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
+          className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down" // Mengurangi ukuran font di mobile
           style={{ transform: `translateY(${scrollPosition * 0.3}px)` }} // Efek parallax
         >
           {hero.title}
         </h1>
         {/* Subtitle Hero dengan animasi pembukaan dan parallax */}
         <p
-          className="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300"
+          className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300" // Mengurangi ukuran font di mobile
           style={{ transform: `translateY(${scrollPosition * 0.2}px)` }} // Efek parallax
         >
           {hero.subtitle}
@@ -355,7 +355,7 @@ const AdvantagesSection = ({ advantages }) => (
     <SectionWrapper id="keunggulan" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2> {/* Mengurangi ukuran font di mobile */}
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -369,7 +369,7 @@ const AdvantagesSection = ({ advantages }) => (
                             <item.icon className="w-8 h-8 text-indigo-600" />
                         </div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
-                        <p className="text-gray-600">{item.description}</p>
+                        <p className="text-gray-600 text-sm">{item.description}</p> {/* Memastikan text-sm */}
                     </div>
                 ))}
             </div>
@@ -383,10 +383,10 @@ const AboutSection = ({ about }) => (
     <SectionWrapper id="tentang-kami" className="bg-slate-50 bg-lines-pattern"> {/* Tambahkan kelas pattern */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2> {/* Mengurangi ukuran font di mobile */}
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
-            <div className="max-w-3xl mx-auto text-gray-700 text-lg leading-relaxed">
+            <div className="max-w-3xl mx-auto text-gray-700 text-base md:text-lg leading-relaxed"> {/* Mengurangi ukuran font di mobile */}
                 <p className="mb-6 whitespace-pre-line text-center md:text-left">{about.description1}</p>
                 <p className="mb-4 whitespace-pre-line text-center md:text-left">{about.description2Intro}</p>
                 <ul className="mb-6 space-y-3 pl-0"> {/* pl-0 untuk menghilangkan padding default list */}
@@ -408,13 +408,13 @@ const ServiceHoursSection = ({ serviceHours }) => (
   <SectionWrapper id="jam-operasional" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12 sm:mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2>
+        <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2> {/* Mengurangi ukuran font di mobile */}
         <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
       </div>
       <div className="max-w-2xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden p-8 animated-item"> {/* Apply animation to the main box */}
         <ul className="space-y-4">
           {serviceHours.schedule.map((entry, index) => (
-            <li key={index} className={`flex justify-between items-center text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`}
+            <li key={index} className={`flex justify-between items-center text-base md:text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`} // Mengurangi ukuran font di mobile
                 style={{ animationDelay: `${0.1 + index * 0.1}s` }}> {/* Staggered delay for each schedule item */}
               <span className="flex items-center">
                 <Clock className="w-6 h-6 mr-3 text-indigo-500" />
@@ -490,7 +490,7 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
         )}
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-2">{item.name}</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3> {/* Mengurangi ukuran font */}
         {/* min-h-[60px] untuk menjaga tinggi deskripsi agar konsisten */}
         <p className="text-gray-600 text-sm mb-4 flex-grow min-h-[60px]">{item.description}</p>  
 
@@ -527,7 +527,7 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
         )}
 
         {/* Harga Produk */}
-        <p className="text-3xl font-bold text-indigo-700 mb-6 mt-auto pt-4"> {/* Changed color */}
+        <p className="text-2xl font-bold text-indigo-700 mb-6 mt-auto pt-4"> {/* Mengurangi ukuran font */}
           {selectedSize ? selectedSize.price : item.price}
         </p>
         {/* Tombol Pesan Sekarang */}
@@ -547,7 +547,7 @@ const ProductSection = ({ pricing, contactInfo }) => (
     <SectionWrapper id="daftar-produk" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2> {/* Mengurangi ukuran font di mobile */}
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
             </div>
@@ -565,7 +565,7 @@ const TestimonialSection = ({ testimonials }) => (
     <SectionWrapper id="testimoni" className="bg-white bg-lines-pattern"> {/* Tambahkan kelas pattern */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2>
+            <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2> {/* Mengurangi ukuran font di mobile */}
             <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
             </div>
@@ -577,7 +577,7 @@ const TestimonialSection = ({ testimonials }) => (
                     style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
                 >
                     {/* Gambar avatar dihapus dari sini */}
-                    <p className="text-gray-600 text-lg italic mb-4 flex-grow">"{review.quote}"</p>
+                    <p className="text-base md:text-lg italic mb-4 flex-grow">"{review.quote}"</p> {/* Mengurangi ukuran font di mobile */}
                     <div className="font-semibold text-indigo-700 mt-auto">{review.author}</div>
                     <div className="text-sm text-gray-500">{review.city}</div>
                 </div>
@@ -600,7 +600,7 @@ const FaqItem = ({ item, index }) => { // Menerima index
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex justify-between items-center text-left py-5 px-6 focus:outline-none"
             >
-                <span className="text-lg font-medium text-gray-800">{item.q}</span>
+                <span className="text-base md:text-lg font-medium text-gray-800">{item.q}</span> {/* Mengurangi ukuran font di mobile */}
                 <ChevronUp className={`w-5 h-5 text-indigo-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
@@ -615,7 +615,7 @@ const FaqSection = ({ faq }) => (
     <SectionWrapper id="faq" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2>
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2> {/* Mengurangi ukuran font di mobile */}
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
             <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -634,7 +634,7 @@ const ContactSection = ({ contact }) => (
         <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white py-16 sm:py-24">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold mb-4">{contact.title}</h2>
+                    <h2 className="text-2xl sm:text-4xl font-bold mb-4">{contact.title}</h2> {/* Mengurangi ukuran font di mobile */}
                     <div className="w-24 h-1 bg-indigo-400 mx-auto rounded-full"></div>
                 </div>
                 <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-8 gap-y-12 items-center">
@@ -645,7 +645,9 @@ const ContactSection = ({ contact }) => (
                         {/* Alamat */}
                         <div className="flex items-center justify-center md:justify-start">
                             <MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
-                            <p className="text-indigo-100">{contact.address}</p>
+                            <p className="text-indigo-100">
+                                {contact.address}
+                            </p>
                         </div>
                         {/* Telepon */}
                         <div className="flex items-center justify-center md:justify-start">
@@ -668,7 +670,7 @@ const ContactSection = ({ contact }) => (
                         className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item" // Animasi slide dari bawah
                         style={{ animationDelay: `0.15s` }} // Slight delay for the second column
                     >
-                        <h3 className="text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3>
+                        <h3 className="text-xl md:text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3> {/* Mengurangi ukuran font di mobile */}
                         <p className="text-indigo-200 mb-6">Hubungi kami langsung di WhatsApp!</p>
                         <a
                             href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20tertarik%20dengan%20produk%20Anda.`}
@@ -683,7 +685,7 @@ const ContactSection = ({ contact }) => (
                 {/* Tautan E-commerce (jika ada) */}
                 {contact.eCommerceLinks && contact.eCommerceLinks.length > 0 && (
                     <div className="mt-16 text-center">
-                      <h3 className="text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3>
+                      <h3 className="text-xl md:text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3> {/* Mengurangi ukuran font di mobile */}
                       <div className="flex flex-wrap justify-center gap-6">
                         {contact.eCommerceLinks.map((platform, index) => ( // Meneruskan index
                           <a
@@ -696,7 +698,7 @@ const ContactSection = ({ contact }) => (
                           >
                             {/* Ikon sekarang akan menjadi putih agar kontras dengan latar belakang biru */}
                             <ShoppingCart className={`w-8 h-8 mr-3 text-white`} /> 
-                            <span className="font-medium text-lg">{platform.name}</span>
+                            <span className="font-medium text-base md:text-lg">{platform.name}</span> {/* Mengurangi ukuran font di mobile */}
                           </a>
                         ))}
                       </div>
