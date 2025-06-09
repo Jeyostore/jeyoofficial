@@ -10,7 +10,7 @@ const MOCK_DATA = {
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
     imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png",
-    mobileImageUrl: "https://c.pxhere.com/images/9c/73/a911e14204790a3a2f44a5ffba95-1639133.jpg!d", // Gambar baru untuk mobile
+    mobileImageUrl: "https://c.pxhere.com/images/9c/73/a911e14204790a3a2f44a5ffba95-1639133.jpg!d", // Gambar baru yang valid untuk mobile
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -463,6 +463,15 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
       style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
     >
       <div className="relative h-56">
+        {!isImageLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-t-xl">
+            {/* Spinner sederhana */}
+            <svg className="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+        )}
         {/* Gambar Produk */}
         <img  
             src={item.imageUrl}  
@@ -830,16 +839,23 @@ const App = () => {
         opacity: 0;
         animation: slideInRightStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
-      
+      /* New keyframe for pulse effect for floating buttons */
+      @keyframes pulseEffect {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      .animate-pulse-effect {
+        animation: pulseEffect 2s infinite ease-in-out;
+      }
       /* Subtle background patterns */
       .bg-dots-pattern {
-        background-image: radial-gradient(#e5e7eb 1px, transparent 1px); /* light grey dots */
-        background-size: 16px 16px; /* spacing of dots */
+        background-image: radial-gradient(#d1d5db 1px, transparent 1px); /* darker grey dots */
+        background-size: 20px 20px; /* larger spacing */
         background-position: 0 0;
       }
       .bg-lines-pattern {
-        background-image: linear-gradient(to right, #f3f4f6 1px, transparent 1px), linear-gradient(to bottom, #f3f4f6 1px, transparent 1px);
-        background-size: 16px 16px;
+        background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px); /* darker grey lines */
+        background-size: 20px 20px; /* larger spacing */
         background-position: 0 0;
       }
     `;
