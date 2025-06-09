@@ -71,7 +71,7 @@ const MOCK_DATA = {
     instagramUsername: "jeyoofficial.store",
     instagramLink: "https://www.instagram.com/jeyoofficial.store",
     eCommerceLinks: [
-      { name: "Shopee", url: "https://shopee.co.id/jeyo_store_official" },
+      { name: "Shopee", url: "https://shopee.co.id/neyes" },
       { name: "Tokopedia", url: "https://www.tokopedia.com/jeyoofficial" },
       { name: "Lazada", url: "https://www.lazada.co.id/shop/jeyo-store-official" }
     ]
