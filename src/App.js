@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom'; // Import ReactDOM untuk createPortal
-import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react'; // Mengimpor Flame
+import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react'; // Mengimpor Flame dan BadgePercent
 
 // Data Mockup untuk konten landing page
 const MOCK_DATA = {
@@ -10,7 +10,7 @@ const MOCK_DATA = {
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
     imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png",
-    mobileImageUrl: "https://c.pxhere.com/images/9c/73/a911e14204790a3a2f44a5ffba95-1639133.jpg!d", // Gambar baru yang valid untuk mobile
+    mobileImageUrl: "https://cdn.pixabay.com/photo/2017/08/17/10/24/delivery-2651147_1280.png", // URL gambar mobile yang valid
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -717,61 +717,6 @@ const Footer = ({ businessName, copyright }) => (
   </footer>
 );
 
-// Tombol Mengambang (Floating Buttons)
-const FloatingButtons = ({ contact }) => {
-    const [isVisible, setIsVisible] = useState(true); // Default: always visible for testing
-    const [scrollProgress, setScrollProgress] = useState(0);
-
-    useEffect(() => {
-        const toggleVisibilityAndProgress = () => {
-            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const currentScroll = window.scrollY;
-            const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0;
-
-            // setIsVisible(currentScroll > 300); // Re-enable this after debugging
-            setScrollProgress(progress);
-        };
-        window.addEventListener('scroll', toggleVisibilityAndProgress);
-        toggleVisibilityAndProgress();
-        return () => window.removeEventListener('scroll', toggleVisibilityAndProgress);
-    }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    // Ukuran tombol 48x48px (w-12 h-12)
-    const size = 48;
-    const strokeWidth = 4;
-    const radius = (size / 2) - (strokeWidth / 2);
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
-
-    return ReactDOM.createPortal( // Menggunakan createPortal untuk memastikan posisi fixed bekerja
-        <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-center gap-3">
-             {/* Tombol WhatsApp (ukuran diperkecil, ikon diperkecil) */}
-             <a
-                href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 flex items-center justify-center w-12 h-12 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} // Animasi masuk/keluar
-                aria-label="Chat di WhatsApp"
-             >
-                <MessageCircle className="w-6 h-6" /> {/* Ukuran ikon 24x24px */}
-            </a>
-            {/* Tombol Scroll ke Atas yang disederhanakan dan selalu terlihat untuk debugging */}
-            <button
-                onClick={scrollToTop}
-                className="bg-blue-600 text-white rounded-full shadow-lg transition-all duration-300 relative flex items-center justify-center w-12 h-12" // Ukuran 48x48px, warna biru
-                aria-label="Kembali ke atas"
-            >
-                <ChevronUp className="w-6 h-6" /> {/* Ikon 24x24px */}
-            </button>
-        </div>,
-        document.body // Render portal ke body dokumen
-    );
-};
-
 
 // Komponen Utama Aplikasi
 const App = () => {
@@ -892,8 +837,7 @@ const App = () => {
       </main>
       {/* Footer */}
       <Footer businessName={businessName} copyright={footer.copyright} />
-      {/* Tombol Mengambang (WhatsApp dan Scroll ke Atas) */}
-      <FloatingButtons contact={contact} />
+      {/* Tombol Mengambang (WhatsApp dan Scroll ke Atas) - Dihapus */}
     </div>
   );
 };
