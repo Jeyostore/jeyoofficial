@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, CircleDot, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react';
+import ReactDOM from 'react-dom'; // Import ReactDOM untuk createPortal
+import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react'; // Mengimpor Flame
 
 // Data Mockup untuk konten landing page
 const MOCK_DATA = {
@@ -9,6 +10,7 @@ const MOCK_DATA = {
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
     imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png",
+    mobileImageUrl: "https://c.pxhere.com/images/9c/73/a911e14204790a3a2f44a5ffba95-1639133.jpg!d", // Gambar baru untuk mobile
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -190,8 +192,8 @@ const Navbar = ({ businessName, navLinks }) => {
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="text-xl md:text-2xl font-extrabold flex items-center group"
             >
-              <CircleDot className="w-8 h-8 mr-2 text-indigo-700" /> {/* Changed icon and color */}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-800 to-purple-800">{businessName}</span> {/* Adjusted gradient */}
+              <Flame className="w-8 h-8 mr-2 text-blue-500" /> {/* Mengubah ikon menjadi Flame dan warnanya */}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600">{businessName}</span> {/* Menyesuaikan gradien warna */}
             </a>
           </div>
           {/* Tautan Navigasi Desktop */}
@@ -275,45 +277,78 @@ const SectionWrapper = ({ children, id, className = '' }) => { // Tambahkan clas
 };
 
 // Komponen Hero Section
-const HeroSection = ({ hero }) => (
-  <section  
-    id="hero"  
-    className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20"
-    style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${hero.imageUrl})` }}
-  >
-    <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
-    <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
-      {/* Judul Hero dengan animasi baru */}
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down">
-        {hero.title}
-      </h1>
-      {/* Subtitle Hero dengan animasi baru */}
-      <p className="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300">
-        {hero.subtitle}
-      </p>
-      {/* Tombol CTA Hero dengan animasi baru */}
-      <a
-        href="#daftar-produk"  
-        onClick={(e) => {
-          e.preventDefault();
-          const productSection = document.getElementById('daftar-produk');  
-          if (productSection) {
-            const navbarHeight = document.querySelector('nav')?.offsetHeight || 70;
-            const elementPosition = productSection.getBoundingClientRect().top + window.scrollY;
-            window.scrollTo({
-              top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
-              behavior: 'smooth'
-            });
-          }
-        }}
-        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
-      >
-        {hero.cta}
-        <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
-      </a>
-    </div>
-  </section>
-);
+const HeroSection = ({ hero }) => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [currentImageUrl, setCurrentImageUrl] = useState(hero.imageUrl); // State untuk menyimpan URL gambar saat ini
+
+  // Efek untuk melacak posisi scroll dan menyesuaikan gambar hero
+  useEffect(() => {
+    const handleScrollAndResize = () => {
+      setScrollPosition(window.scrollY);
+      // Sesuaikan gambar berdasarkan lebar layar
+      if (window.innerWidth < 768 && hero.mobileImageUrl) { // Misalnya, di bawah 768px (ukuran md di Tailwind)
+        setCurrentImageUrl(hero.mobileImageUrl);
+      } else {
+        setCurrentImageUrl(hero.imageUrl);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollAndResize);
+    window.addEventListener('resize', handleScrollAndResize); // Tambahkan event listener untuk resize
+    handleScrollAndResize(); // Panggil saat mount untuk set posisi awal dan gambar awal
+    return () => {
+      window.removeEventListener('scroll', handleScrollAndResize);
+      window.removeEventListener('resize', handleScrollAndResize); // Bersihkan listener
+    };
+  }, [hero.imageUrl, hero.mobileImageUrl]); // Dependensi ditambahkan agar efek terpicu jika URL gambar berubah
+
+  return (
+    <section  
+      id="hero"  
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20 overflow-hidden" // overflow-hidden untuk mencegah scrollbar saat parallax
+      style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${currentImageUrl})` }} // Gunakan currentImageUrl
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
+        {/* Judul Hero dengan animasi pembukaan dan parallax */}
+        <h1
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
+          style={{ transform: `translateY(${scrollPosition * 0.3}px)` }} // Efek parallax
+        >
+          {hero.title}
+        </h1>
+        {/* Subtitle Hero dengan animasi pembukaan dan parallax */}
+        <p
+          className="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300"
+          style={{ transform: `translateY(${scrollPosition * 0.2}px)` }} // Efek parallax
+        >
+          {hero.subtitle}
+        </p>
+        {/* Tombol CTA Hero dengan animasi pembukaan dan parallax */}
+        <a
+          href="#daftar-produk"  
+          onClick={(e) => {
+            e.preventDefault();
+            const productSection = document.getElementById('daftar-produk');  
+            if (productSection) {
+              const navbarHeight = document.querySelector('nav')?.offsetHeight || 70;
+              const elementPosition = productSection.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({
+                top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
+                behavior: 'smooth'
+              });
+            }
+          }}
+          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
+          style={{ transform: `translateY(${scrollPosition * 0.1}px)` }} // Efek parallax
+        >
+          {hero.cta}
+          <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+        </a>
+      </div>
+    </section>
+  );
+};
 
 // Bagian Keunggulan (Advantages Section)
 const AdvantagesSection = ({ advantages }) => (
@@ -424,7 +459,7 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
 
   return (
     <div
-      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] transform group animated-item"
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
       style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
     >
       <div className="relative h-56">
@@ -491,7 +526,7 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
           onClick={handleOrderClick}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-300 inline-flex items-center justify-center group"
         >
-          Pesan Sekarang <ShoppingCart className="ml-2 h-5 w-5 transform group-hover:rotate-12 transition-transform" />
+          Pesanan Sekarang <ShoppingCart className="ml-2 h-5 w-5 transform group-hover:rotate-12 transition-transform" />
         </button>
       </div>
     </div>
@@ -506,7 +541,6 @@ const ProductSection = ({ pricing, contactInfo }) => (
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
-                {/* Perbaikan: Menghapus </div> yang salah di sini */}
             </div>
             <div className="grid md:grid-cols-2 gap-8 sm:gap-10 justify-center max-w-4xl mx-auto">
                 {pricing.items.map((item, index) => ( // Meneruskan index ke PriceCard
@@ -648,10 +682,11 @@ const ContactSection = ({ contact }) => (
                             href={platform.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center p-4 bg-white rounded-lg shadow-md hover:bg-gray-100 text-gray-800 transition-colors transform hover:scale-105 animated-item"
+                            className="flex items-center p-4 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 text-white transition-colors transform hover:scale-105 animated-item" // Diubah menjadi full biru
                             style={{ animationDelay: `${0.4 + index * 0.1}s` }} // Staggered delay for eCommerce links
                           >
-                            <ShoppingCart className={`w-8 h-8 mr-3 ${platform.iconColor}`} />
+                            {/* Ikon sekarang akan menjadi putih agar kontras dengan latar belakang biru */}
+                            <ShoppingCart className={`w-8 h-8 mr-3 text-white`} /> 
                             <span className="font-medium text-lg">{platform.name}</span>
                           </a>
                         ))}
@@ -675,21 +710,20 @@ const Footer = ({ businessName, copyright }) => (
 
 // Tombol Mengambang (Floating Buttons)
 const FloatingButtons = ({ contact }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [scrollProgress, setScrollProgress] = useState(0); // State baru untuk progress scroll
+    const [isVisible, setIsVisible] = useState(true); // Default: always visible for testing
+    const [scrollProgress, setScrollProgress] = useState(0);
 
     useEffect(() => {
         const toggleVisibilityAndProgress = () => {
             const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-            // Hindari pembagian dengan nol jika totalHeight adalah 0 (misalnya pada halaman yang sangat pendek)
             const currentScroll = window.scrollY;
             const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0;
 
-            setIsVisible(currentScroll > 300);
+            // setIsVisible(currentScroll > 300); // Re-enable this after debugging
             setScrollProgress(progress);
         };
         window.addEventListener('scroll', toggleVisibilityAndProgress);
-        toggleVisibilityAndProgress(); // Panggil saat mount untuk set status awal
+        toggleVisibilityAndProgress();
         return () => window.removeEventListener('scroll', toggleVisibilityAndProgress);
     }, []);
 
@@ -697,61 +731,35 @@ const FloatingButtons = ({ contact }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Untuk lingkaran SVG
-    const radius = 20; // Radius lingkaran
+    // Ukuran tombol 48x48px (w-12 h-12)
+    const size = 48;
+    const strokeWidth = 4;
+    const radius = (size / 2) - (strokeWidth / 2);
     const circumference = 2 * Math.PI * radius;
-    // Stroke dashoffset dikurangi dari keliling untuk menunjukkan progress
     const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
 
-    return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
-             {/* Tombol WhatsApp */}
+    return ReactDOM.createPortal( // Menggunakan createPortal untuk memastikan posisi fixed bekerja
+        <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-center gap-3">
+             {/* Tombol WhatsApp (ukuran diperkecil, ikon diperkecil) */}
              <a
                 href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-transform transform hover:scale-110 flex items-center justify-center group"
-                aria-label="Chat di WhatsApp" // Untuk aksesibilitas
-            >
-                <MessageCircle className="w-8 h-8" />
+                className={`bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 flex items-center justify-center w-12 h-12 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} // Animasi masuk/keluar
+                aria-label="Chat di WhatsApp"
+             >
+                <MessageCircle className="w-6 h-6" /> {/* Ukuran ikon 24x24px */}
             </a>
-            {/* Tombol Scroll ke Atas dengan Indikator Progress */}
-            {isVisible && (
-                <button
-                    onClick={scrollToTop}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all duration-300 animate-fade-in-up relative flex items-center justify-center"
-                    aria-label="Kembali ke atas" // Untuk aksesibilitas
-                    style={{ width: '56px', height: '56px', padding: '0' }} // Pastikan ukuran tetap untuk SVG
-                >
-                    <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 48 48">
-                        {/* Lingkaran latar belakang */}
-                        <circle
-                            className="text-gray-400"
-                            strokeWidth="4"
-                            stroke="currentColor"
-                            fill="transparent"
-                            r={radius}
-                            cx="28"
-                            cy="28"
-                        />
-                        {/* Lingkaran progress */}
-                        <circle
-                            className="text-indigo-200"
-                            strokeWidth="4"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
-                            strokeLinecap="round"
-                            stroke="currentColor"
-                            fill="transparent"
-                            r={radius}
-                            cx="28"
-                            cy="28"
-                        />
-                    </svg>
-                    <ChevronUp className="w-7 h-7 relative z-10" /> {/* Ikon di atas SVG */}
-                </button>
-            )}
-        </div>
+            {/* Tombol Scroll ke Atas yang disederhanakan dan selalu terlihat untuk debugging */}
+            <button
+                onClick={scrollToTop}
+                className="bg-blue-600 text-white rounded-full shadow-lg transition-all duration-300 relative flex items-center justify-center w-12 h-12" // Ukuran 48x48px, warna biru
+                aria-label="Kembali ke atas"
+            >
+                <ChevronUp className="w-6 h-6" /> {/* Ikon 24x24px */}
+            </button>
+        </div>,
+        document.body // Render portal ke body dokumen
     );
 };
 
