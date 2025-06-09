@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, Candy, CircleDot, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, Info } from 'lucide-react'; // Import new icons
+import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, CircleDot, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react';
 
 // Data Mockup untuk konten landing page
 const MOCK_DATA = {
@@ -8,7 +8,16 @@ const MOCK_DATA = {
     title: "Selamat Datang di Jeyo Store",
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png", // Placeholder image for hero section
+    imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png",
+  },
+  advantages: {
+    title: "Mengapa Memilih Jeyo Store?",
+    items: [
+      { icon: ThumbsUp, title: "Kualitas Terjamin", description: "Kami hanya menggunakan bahan-bahan pilihan untuk menghasilkan produk terbaik." },
+      { icon: ShieldCheck, title: "100% Halal", description: "Semua produk kami dijamin halal dan diproses secara higienis." },
+      { icon: BadgePercent, title: "Harga Terjangkau", description: "Nikmati camilan berkualitas tanpa menguras kantong." },
+      { icon: Package, title: "Pengemasan Aman", description: "Produk dikemas dengan aman untuk menjaga kualitas hingga sampai ke tangan Anda." },
+    ]
   },
   about: {
     title: "Tentang Kami",
@@ -26,8 +35,8 @@ const MOCK_DATA = {
   serviceHours: {
     title: "Jam Operasional Kami",
     schedule: [
-      { day: "Senin - Jumat", time: "08:00 - 15:00 WIB" },
-      { day: "Sabtu - Minggu", time: "09:00 - 17:00 WIB" },
+      { day: "Senin - Jumat", time: "08:00 - 15:00 WIB", isClosed: false },
+      { day: "Sabtu - Minggu", time: "09:00 - 17:00 WIB", isClosed: false },
       { day: "Hari Libur Nasional", time: "Tutup", isClosed: true },
     ],
     note: "Pesanan di luar jam operasional akan diproses pada hari kerja berikutnya.",
@@ -56,10 +65,19 @@ const MOCK_DATA = {
     title: "Apa Kata Pelanggan Kami?",
     description: "Dengarkan pengalaman nyata dari pelanggan setia Jeyo Store yang telah menikmati produk-produk berkualitas kami.",
     reviews: [
-      { id: 1, quote: "Mie Lidi Jeyo Store paling enak! Pedasnya pas, bikin nagih terus. Selalu jadi pilihan pertama saya.", author: "Prayoga Akbar", city: "Bogor" },
-      { id: 2, quote: "Makaroninya gurih banget, cocok buat teman ngopi sore. Anak-anak di rumah juga suka!", author: "Budi Santoso", city: "Jakarta" },
-      { id: 3, quote: "Pengemasannya rapi dan higienis. Produknya selalu fresh. Pelayanan juga cepat dan ramah.", author: "M Taufik", city: "Bandung" },
-      { id: 4, quote: "Harga sangat terjangkau dengan kualitas premium. Mie Lidi Populer memang juara!", author: "Rudi Wijaya", city: "Yogyakarta" },
+      { id: 1, quote: "Mie Lidi Jeyo Store paling enak! Pedasnya pas, bikin nagih terus. Selalu jadi pilihan pertama saya.", author: "Prayoga Akbar", city: "Bogor", avatar: "https://i.pravatar.cc/150?u=prayoga" },
+      { id: 2, quote: "Makaroninya gurih banget, cocok buat teman ngopi sore. Anak-anak di rumah juga suka!", author: "Budi Santoso", city: "Jakarta", avatar: "https://i.pravatar.cc/150?u=budi" },
+      { id: 3, quote: "Pengemasannya rapi dan higienis. Produknya selalu fresh. Pelayanan juga cepat dan ramah.", author: "M Taufik", city: "Bandung", avatar: "https://i.pravatar.cc/150?u=taufik" },
+      { id: 4, quote: "Harga sangat terjangkau dengan kualitas premium. Mie Lidi Populer memang juara!", author: "Rudi Wijaya", city: "Yogyakarta", avatar: "https://i.pravatar.cc/150?u=rudi" },
+    ]
+  },
+  faq: {
+    title: "Pertanyaan yang Sering Diajukan (FAQ)",
+    items: [
+        { q: "Bagaimana cara memesan produk?", a: "Anda dapat memesan langsung melalui WhatsApp dengan menekan tombol 'Pesan Sekarang' pada produk yang Anda inginkan, atau melalui platform e-commerce kami seperti Shopee, Tokopedia, dan Lazada." },
+        { q: "Apakah produk Jeyo Store halal?", a: "Ya, semua produk kami 100% halal dan dibuat dengan bahan-bahan yang terjamin kualitasnya." },
+        { q: "Berapa lama proses pengiriman?", a: "Pesanan akan diproses pada jam operasional kami. Untuk estimasi waktu pengiriman tergantung pada layanan kurir dan lokasi Anda. Pesanan di wilayah Jabodetabek biasanya tiba dalam 1-3 hari kerja." },
+        { q: "Apakah ada diskon untuk pembelian dalam jumlah banyak?", a: "Tentu! Kami menyediakan harga khusus untuk reseller atau pembelian dalam jumlah besar. Silakan hubungi kami melalui WhatsApp untuk informasi lebih lanjut." }
     ]
   },
   contact: {  
@@ -67,13 +85,13 @@ const MOCK_DATA = {
     address: "Jl. Nagrak, Bogas Valley Blok E No 1 Sukaraja, Kab.Bogor Jawa Barat, Indonesia",
     phone: "+62 896-9933-5843",
     email: "jeyoofficial.store@gmail.com",
-    whatsappNumber: "6289699335843", // Nomor WhatsApp tanpa tanda +
+    whatsappNumber: "6289699335843",
     instagramUsername: "jeyoofficial.store",
     instagramLink: "https://www.instagram.com/jeyoofficial.store",
     eCommerceLinks: [
-      { name: "Shopee", url: "https://shopee.co.id/neyes" },
-      { name: "Tokopedia", url: "https://www.tokopedia.com/jeyoofficial" },
-      { name: "Lazada", url: "https://www.lazada.co.id/shop/jeyo-store-official" }
+      { name: "Shopee", url: "https://shopee.co.id/neyes", iconColor: "text-orange-500" },
+      { name: "Tokopedia", url: "https://www.tokopedia.com/jeyoofficial", iconColor: "text-green-500" },
+      { name: "Lazada", url: "https://www.lazada.co.id/shop/jeyo-store-official", iconColor: "text-blue-500" }
     ]
   },
   footer: {
@@ -81,9 +99,8 @@ const MOCK_DATA = {
   }
 };
 
-// Hook kustom untuk deteksi visibilitas bagian dengan Intersection Observer
-const useSectionVisibility = (threshold = 0.3) => {
-  const ref = useRef(null);
+// Hook kustom untuk deteksi visibilitas bagian
+const useSectionVisibility = (ref, threshold = 0.1) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -91,11 +108,10 @@ const useSectionVisibility = (threshold = 0.3) => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-        } else {
-            setIsVisible(false); // Reset visibility when element is out of view
+          observer.unobserve(entry.target); // Hentikan observasi setelah terlihat
         }
       },
-      { threshold }
+      { threshold } // Persentase bagian yang terlihat untuk memicu
     );
 
     if (ref.current) {
@@ -104,65 +120,60 @@ const useSectionVisibility = (threshold = 0.3) => {
 
     return () => {
       if (ref.current) {
-        observer.unobserve(ref.current);
+        observer.unobserve(ref.current); // Bersihkan observer saat komponen di-unmount
       }
     };
-  }, [threshold]);
+  }, [ref, threshold]);
 
-  return [ref, isVisible];
+  return isVisible;
 };
 
-// --- Komponen Navigasi ---
+// Komponen Navigasi
 const Navbar = ({ businessName, navLinks }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('');
 
-  // Map link names to Lucide icons
+  // Ikon yang sesuai untuk setiap tautan navigasi
   const linkIcons = {
+    'Keunggulan': Star,
     'Tentang Kami': Building,
-    'Jam Layanan': Clock,
     'Daftar Produk': ShoppingBag,
     'Testimoni': MessageSquare,
+    'FAQ': HelpCircle,
     'Kontak': PhoneCall,
+    'Jam Operasional': Clock, // Menambahkan ikon untuk Jam Operasional
   };
 
+  // Efek untuk menandai tautan navigasi aktif berdasarkan posisi scroll
   useEffect(() => {
     const handleScroll = () => {
-      let currentSectionId = '';
-      // Loop through sections from bottom to top to find the most visible one
-      for (let i = navLinks.length - 1; i >= 0; i--) {
-        const link = navLinks[i];
-        const section = document.getElementById(link.href.substring(1));
-        if (section) {
-          // Calculate section's top position relative to the viewport
-          const sectionTop = section.offsetTop - (window.innerHeight * 0.3); // Adjust offset for better detection
-          const sectionBottom = sectionTop + section.offsetHeight;
-          
-          // Check if the current scroll position is within this section
-          if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
-            currentSectionId = link.href.substring(1);
-            break; // Found the active section, no need to check further
-          }
-        }
-      }
-      setActiveLink(currentSectionId);
+        let currentSectionId = '';
+        const offset = window.innerHeight * 0.4; // Menentukan offset untuk aktivasi tautan
+        [...navLinks].reverse().forEach(link => { // Memulai dari bawah untuk akurasi yang lebih baik
+            const section = document.getElementById(link.href.substring(1));
+            if (section && section.offsetTop <= window.scrollY + offset) {
+                if (!currentSectionId) currentSectionId = link.href.substring(1);
+            }
+        });
+        // Set tautan aktif atau biarkan kosong jika di bagian atas halaman
+        setActiveLink(currentSectionId || (window.scrollY < 200 ? '' : activeLink));
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Call once on mount to set initial active link
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true }); // Menggunakan passive listener untuk performa
+    handleScroll(); // Panggil saat mount untuk set posisi awal
+    return () => window.removeEventListener('scroll', handleScroll); // Bersihkan listener
   }, [navLinks]);
 
 
+  // Fungsi untuk menangani klik tautan navigasi
   const handleNavClick = (href) => {
-    setIsOpen(false); // Close mobile menu on link click
+    setIsOpen(false); // Tutup menu mobile setelah klik
     const element = document.getElementById(href.substring(1));
     if (element) {
-      // Calculate scroll position to account for fixed navbar height
-      const navbarHeight = document.querySelector('nav')?.offsetHeight || 0;
+      const navbarHeight = document.querySelector('nav')?.offsetHeight || 70; // Dapatkan tinggi navbar
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
-        top: elementPosition - navbarHeight - 10, // Add a little extra offset
+        top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
         behavior: 'smooth'
       });
     }
@@ -172,82 +183,74 @@ const Navbar = ({ businessName, navLinks }) => {
     <nav className="bg-white/80 backdrop-blur-md shadow-lg fixed w-full top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
+          {/* Logo Bisnis */}
           <div className="flex items-center">
-            {/* Business name with blue text, Flame icon, and pulse animation */}
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="text-xl md:text-2xl font-extrabold flex items-center justify-center py-2 px-3 rounded-md
-                          text-blue-800 /* Blue text */
-                          hover:text-blue-900 transition-colors duration-300 transform hover:scale-110 shadow-lg"
+              className="text-xl md:text-2xl font-extrabold flex items-center group"
             >
-              <Flame className="w-7 h-7 mr-2 text-red-500 animate-pulse" /> {/* Flame icon, red color, pulse animation */}
-              {businessName}
+              <CircleDot className="w-8 h-8 mr-2 text-indigo-700" /> {/* Changed icon and color */}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-800 to-purple-800">{businessName}</span> {/* Adjusted gradient */}
             </a>
           </div>
+          {/* Tautan Navigasi Desktop */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+            <div className="ml-10 flex items-baseline space-x-1 lg:space-x-2">
               {navLinks.map((link) => {
-                const IconComponent = linkIcons[link.name]; // Get the icon component based on link name
+                const IconComponent = linkIcons[link.name];
+                const isActive = activeLink === link.href.substring(1);
                 return (
                   <a
                     key={link.name}
                     href={link.href}
                     onClick={(e) => { e.preventDefault(); handleNavClick(link.href);}}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 flex items-center ${ // Added flex and items-center for icon alignment
-                      activeLink === link.href.substring(1)
-                        ? 'bg-indigo-600 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-indigo-100 hover:text-indigo-700'
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 flex items-center group relative ${
+                      isActive
+                        ? 'text-indigo-700' // Slightly deeper indigo for active state
+                        : 'text-gray-600 hover:text-indigo-700'
                     }`}
                   >
-                    {activeLink === link.href.substring(1) && ( // Conditionally render active dot icon
-                      <CircleDot className="w-4 h-4 mr-1 text-amber-300" /> // Small amber dot icon
-                    )}
-                    {IconComponent && ( // Render the specific icon for the link
-                      <IconComponent className={`w-4 h-4 mr-1 ${activeLink === link.href.substring(1) ? 'text-white' : 'text-gray-600'}`} />
-                    )}
+                    {IconComponent && <IconComponent className={`w-4 h-4 mr-2 transition-colors ${isActive ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} />}
                     {link.name}
+                    {/* Indikator aktif/hover di bawah teks */}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-0.5 bg-indigo-600 transform transition-all duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
                   </a>
                 );
               })}
             </div>
           </div>
+          {/* Tombol Hamburger Mobile */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 p-2 rounded-md"
-              aria-label="Toggle menu"
+              className="text-gray-700 hover:text-indigo-600 focus:outline-none p-2 rounded-md"
             >
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-                )}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} />
               </svg>
             </button>
           </div>
         </div>
       </div>
+      {/* Menu Mobile */}
       {isOpen && (
         <div className="md:hidden bg-white shadow-lg rounded-b-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navLinks.map((link) => {
-              const IconComponent = linkIcons[link.name]; // Get the icon component
+              const IconComponent = linkIcons[link.name];
               return (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleNavClick(link.href);}}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 flex items-center ${ // Added flex and items-center for icon alignment
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 flex items-center ${
                     activeLink === link.href.substring(1)
                       ? 'bg-indigo-600 text-white'
-                      : 'text-gray-700 hover:bg-indigo-100 hover:text-indigo-700'
+                      : 'text-gray-700 hover:bg-indigo-100'
                   }`}
                 >
-                  {IconComponent && ( // Render the specific icon for the link
-                    <IconComponent className={`w-5 h-5 mr-2 ${activeLink === link.href.substring(1) ? 'text-white' : 'text-gray-700'}`} />
-                  )}
+                  {IconComponent && <IconComponent className="w-5 h-5 mr-3" />}
                   {link.name}
                 </a>
               );
@@ -259,37 +262,51 @@ const Navbar = ({ businessName, navLinks }) => {
   );
 };
 
-// --- Komponen Bagian Hero ---
+// Komponen Pembungkus Bagian dengan efek animasi
+const SectionWrapper = ({ children, id, className = '' }) => { // Tambahkan className prop
+    const sectionRef = useRef(null);
+    const isVisible = useSectionVisibility(sectionRef); // Menggunakan hook untuk deteksi visibilitas
+
+    return (
+        <section id={id} ref={sectionRef} className={`py-16 sm:py-24 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}> {/* Tambahkan className */}
+            {children}
+        </section>
+    );
+};
+
+// Komponen Hero Section
 const HeroSection = ({ hero }) => (
   <section  
     id="hero"  
     className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20"
-    style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${hero.imageUrl})` }} // Overlay with gradient
+    style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${hero.imageUrl})` }}
   >
     <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
     <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-fade-in-down">
+      {/* Judul Hero dengan animasi baru */}
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down">
         {hero.title}
       </h1>
-      <p className="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-fade-in-up animation-delay-300">
+      {/* Subtitle Hero dengan animasi baru */}
+      <p className="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300">
         {hero.subtitle}
       </p>
+      {/* Tombol CTA Hero dengan animasi baru */}
       <a
         href="#daftar-produk"  
         onClick={(e) => {
           e.preventDefault();
           const productSection = document.getElementById('daftar-produk');  
           if (productSection) {
-            // Adjust scroll position for fixed navbar
-            const navbarHeight = document.querySelector('nav')?.offsetHeight || 0;
+            const navbarHeight = document.querySelector('nav')?.offsetHeight || 70;
             const elementPosition = productSection.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({
-              top: elementPosition - navbarHeight - 10,
+              top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
               behavior: 'smooth'
             });
           }
         }}
-        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in-up animation-delay-600 inline-flex items-center group"
+        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
       >
         {hero.cta}
         <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
@@ -298,145 +315,148 @@ const HeroSection = ({ hero }) => (
   </section>
 );
 
-
-// --- Komponen Bagian Tentang Kami ---
-const AboutSection = ({ about }) => {
-    // Use custom hook for section visibility
-    const [sectionRef, isVisible] = useSectionVisibility(); 
-    return (
-        <section id="tentang-kami" ref={sectionRef} className={`py-16 sm:py-24 bg-slate-50 transition-all duration-1000 ${isVisible ? 'opacity-100 animate-slide-in-left' : 'opacity-0 translate-x-[-50px]'}`}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2>
-                    <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-                </div>
-                <div className="max-w-3xl mx-auto text-gray-700 text-lg leading-relaxed">
-                    <p className="mb-6 whitespace-pre-line text-center md:text-left">{about.description1}</p>
-                    <p className="mb-4 whitespace-pre-line text-center md:text-left">{about.description2Intro}</p>
-                    <ul className="mb-6 space-y-3 pl-0 md:pl-5">
-                    {about.commitments.map((commitment, index) => (
-                        <li key={index} className="flex items-start">
-                        <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
-                        <span>{commitment}</span>
-                        </li>
-                    ))}
-                    </ul>
-                    <p className="whitespace-pre-line text-center md:text-left">{about.closingStatement}</p>
-                </div>
+// Bagian Keunggulan (Advantages Section)
+const AdvantagesSection = ({ advantages }) => (
+    <SectionWrapper id="keunggulan" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2>
+                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
-        </section>
-    );
-};
-
-// --- Komponen Bagian Jam Layanan ---
-const ServiceHoursSection = ({ serviceHours }) => {
-    // Use custom hook for section visibility
-    const [sectionRef, isVisible] = useSectionVisibility(); 
-    return (
-        <section id="jam-layanan" ref={sectionRef} className={`py-16 sm:py-24 bg-white transition-all duration-1000 ${isVisible ? 'opacity-100 animate-slide-in-right' : 'opacity-0 translate-x-[50px]'}`}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2>
-                    <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-                </div>
-                <div className="max-w-2xl mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 p-8 sm:p-10 rounded-xl shadow-2xl text-white">
-                    <div className="flex items-center justify-center mb-6">
-                        {/* Changed Clock icon color to amber-200 */}
-                        <Clock className="w-12 h-12 text-amber-200 mr-4"/>
-                        <p className="text-lg text-indigo-100">Kami siap melayani Anda pada jam berikut:</p>
-                    </div>
-                    <div className="space-y-4">
-                    {serviceHours.schedule.map((item, index) => (
-                        <div
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {advantages.items.map((item, index) => (
+                    <div
                         key={index}
-                        className={`flex justify-between items-center p-4 rounded-lg transition-all duration-300 ${
-                            item.isClosed ? 'bg-red-400/80' : 'bg-white/20 hover:bg-white/30'
-                        }`}
-                        >
-                        <span className="font-semibold text-lg">{item.day}</span>
-                        <span className={`font-medium text-lg ${item.isClosed ? 'text-red-50' : 'text-indigo-50'}`}>
-                            {item.time}
-                        </span>
+                        className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
+                        style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+                    >
+                        <div className="inline-block p-4 bg-indigo-100 rounded-full mb-4">
+                            <item.icon className="w-8 h-8 text-indigo-600" />
                         </div>
-                    ))}
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
+                        <p className="text-gray-600">{item.description}</p>
                     </div>
-                    <p className="text-sm text-indigo-200 mt-8 text-center">{serviceHours.note}</p>
-                </div>
+                ))}
             </div>
-        </section>
-    );
-};
+        </div>
+    </SectionWrapper>
+);
 
-// --- Komponen Kartu Produk ---
-const PriceCard = ({ item, contactInfo }) => {
-  // State to manage the selected size for a product
+
+// Bagian Tentang Kami (About Section)
+const AboutSection = ({ about }) => (
+    <SectionWrapper id="tentang-kami" className="bg-slate-50 bg-lines-pattern"> {/* Tambahkan kelas pattern */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2>
+                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+            </div>
+            <div className="max-w-3xl mx-auto text-gray-700 text-lg leading-relaxed">
+                <p className="mb-6 whitespace-pre-line text-center md:text-left">{about.description1}</p>
+                <p className="mb-4 whitespace-pre-line text-center md:text-left">{about.description2Intro}</p>
+                <ul className="mb-6 space-y-3 pl-0"> {/* pl-0 untuk menghilangkan padding default list */}
+                {about.commitments.map((commitment, index) => (
+                    <li key={index} className="flex items-start animated-item" style={{ animationDelay: `${index * 0.1}s` }}> {/* Apply staggered animation */}
+                    <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
+                    <span>{commitment}</span>
+                    </li>
+                ))}
+                </ul>
+                <p className="whitespace-pre-line text-center md:text-left">{about.closingStatement}</p>
+            </div>
+        </div>
+    </SectionWrapper>
+);
+
+// Komponen Jam Operasional
+const ServiceHoursSection = ({ serviceHours }) => (
+  <SectionWrapper id="jam-operasional" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-12 sm:mb-16">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2>
+        <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+      </div>
+      <div className="max-w-2xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden p-8 animated-item"> {/* Apply animation to the main box */}
+        <ul className="space-y-4">
+          {serviceHours.schedule.map((entry, index) => (
+            <li key={index} className={`flex justify-between items-center text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`}
+                style={{ animationDelay: `${0.1 + index * 0.1}s` }}> {/* Staggered delay for each schedule item */}
+              <span className="flex items-center">
+                <Clock className="w-6 h-6 mr-3 text-indigo-500" />
+                {entry.day}
+              </span>
+              <span>{entry.time}</span>
+            </li>
+          ))}
+        </ul>
+        {serviceHours.note && (
+          <p className="text-sm text-gray-500 mt-6 text-center italic animated-item" style={{ animationDelay: `${0.1 + serviceHours.schedule.length * 0.1}s` }}>{serviceHours.note}</p>
+        )}
+      </div>
+    </div>
+  </SectionWrapper>
+);
+
+// Komponen Kartu Produk
+const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
   const [selectedSize, setSelectedSize] = useState(item.sizes ? item.sizes[0] : null);
 
-  // Set initial selected size when component mounts or item changes
+  // Set ukuran pertama sebagai default saat komponen dimuat
   useEffect(() => {
     if (item.sizes && item.sizes.length > 0) {
       setSelectedSize(item.sizes[0]);
     }
-  }, [item]);
+  }, [item]); // Terpicu ulang jika item berubah
 
-  // Handle click on "Pesan Sekarang" button
+  // Fungsi untuk menangani tombol "Pesan Sekarang"
   const handleOrderClick = () => {
     let message = `Halo Jeyo Store, saya tertarik untuk memesan produk: ${item.name}`;
     if (selectedSize) {
       message += ` (${selectedSize.name} - ${selectedSize.price})`;
-    } else {
-      // Fallback if no sizes are defined but a price might be
+    } else if (item.price) { // Jika tidak ada ukuran, gunakan harga langsung
       message += ` (Harga: ${item.price})`;
     }
-    // Open WhatsApp chat with pre-filled message
+    // Buka WhatsApp dengan pesan yang sudah diformat
     window.open(`https://wa.me/${contactInfo.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] transform group">
+    <div
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] transform group animated-item"
+      style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+    >
       <div className="relative h-56">
+        {/* Gambar Produk */}
         <img  
             src={item.imageUrl}  
             alt={`[Gambar ${item.name}]`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/FFCDD2/B71C1C?text=Gagal+Muat&font=inter"; }} // Fallback image on error
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${isImageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
+            onLoad={() => setIsImageLoaded(true)} // Set isImageLoaded true setelah gambar berhasil dimuat
+            onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/FFCDD2/B71C1C?text=Gagal+Muat&font=inter"; }} // Fallback gambar
         />
-        {/* Overlay for hover effect on image */}
+        {/* Overlay untuk efek hover */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-opacity duration-300"></div>
-        {/* "Populer!" tag for popular items, changed background to amber-500 */}
+        {/* Label "Populer!" jika ada di fitur */}
         {item.features && item.features.includes("Populer") && (
-            <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
+            <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg"> {/* Changed color */}
                 Populer!
             </div>
         )}
       </div>
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-2xl font-semibold text-gray-800 mb-2">{item.name}</h3>
-        {/* min-h to prevent layout shifts when description length varies */}
+        {/* min-h-[60px] untuk menjaga tinggi deskripsi agar konsisten */}
         <p className="text-gray-600 text-sm mb-4 flex-grow min-h-[60px]">{item.description}</p>  
 
-        {/* Displaying features if available */}
-        {item.features && item.features.length > 0 && (
-          <div className="mb-4">
-            <p className="text-xs font-semibold text-indigo-600 mb-1">Keunggulan:</p>
-            <div className="flex flex-wrap gap-2">
-              {item.features.map((feature, idx) => (
-                <span key={idx} className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full flex items-center hover:bg-opacity-80 transform hover:scale-105 transition-all duration-200">
-                  <Tag className="w-3 h-3 mr-1" />
-                  {feature}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Displaying flavors if available */}
+        {/* Varian Rasa (jika ada) */}
         {item.flavors && item.flavors.length > 0 && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-purple-600 mb-1">Varian Rasa:</p>
+            <p className="text-xs font-semibold text-purple-600 mb-2">Varian Rasa:</p>
             <div className="flex flex-wrap gap-2">
               {item.flavors.map((flavor, idx) => (
-                <span key={idx} className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full flex items-center hover:bg-opacity-80 transform hover:scale-105 transition-all duration-200">
+                <span key={idx} className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full flex items-center">
                   {flavor}
                 </span>
               ))}
@@ -444,10 +464,10 @@ const PriceCard = ({ item, contactInfo }) => {
           </div>
         )}
 
-        {/* Displaying sizes and selection */}
+        {/* Pilihan Ukuran (jika ada) */}
         {item.sizes && item.sizes.length > 0 && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-orange-600 mb-1">Pilih Ukuran:</p>
+            <p className="text-xs font-semibold text-orange-600 mb-2">Pilih Ukuran:</p>
             <select
               value={selectedSize ? selectedSize.name : ''}
               onChange={(e) => setSelectedSize(item.sizes.find(s => s.name === e.target.value))}
@@ -462,13 +482,14 @@ const PriceCard = ({ item, contactInfo }) => {
           </div>
         )}
 
-        {/* Display the selected price, changed text color to amber-600 */}
-        <p className="text-3xl font-bold text-amber-600 mb-6">
+        {/* Harga Produk */}
+        <p className="text-3xl font-bold text-indigo-700 mb-6 mt-auto pt-4"> {/* Changed color */}
           {selectedSize ? selectedSize.price : item.price}
         </p>
+        {/* Tombol Pesan Sekarang */}
         <button
           onClick={handleOrderClick}
-          className="mt-auto w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-300 inline-flex items-center justify-center group"
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-300 inline-flex items-center justify-center group"
         >
           Pesan Sekarang <ShoppingCart className="ml-2 h-5 w-5 transform group-hover:rotate-12 transition-transform" />
         </button>
@@ -477,170 +498,288 @@ const PriceCard = ({ item, contactInfo }) => {
   );
 };
 
-// --- Komponen Daftar Produk ---
-const ProductSection = ({ pricing, contactInfo }) => {
-  // Use custom hook for section visibility
-  const [sectionRef, isVisible] = useSectionVisibility(); 
-  return (
-    <section id="daftar-produk" ref={sectionRef} className={`py-16 sm:py-24 bg-slate-50 transition-all duration-1000 ${isVisible ? 'opacity-100 animate-slide-in-left' : 'opacity-0 translate-x-[-50px]'}`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
-          <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 sm:gap-10 justify-center">
-          {pricing.items.map((item) => (
-            <PriceCard key={item.id} item={item} contactInfo={contactInfo} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// --- Komponen Testimoni ---
-const TestimonialSection = ({ testimonials }) => {
-  // Use custom hook for section visibility
-  const [sectionRef, isVisible] = useSectionVisibility(); 
-  return (
-    <section id="testimoni" ref={sectionRef} className={`py-16 sm:py-24 bg-white transition-all duration-1000 ${isVisible ? 'opacity-100 animate-slide-in-right' : 'opacity-0 translate-x-[50px]'}`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2>
-          <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 sm:gap-10">
-          {testimonials.reviews.map((review) => (
-            <div key={review.id} className="bg-indigo-50 rounded-xl shadow-lg p-6 sm:p-8 flex flex-col items-center text-center">
-              <p className="text-gray-700 text-lg italic mb-4">"{review.quote}"</p>
-              <div className="font-semibold text-indigo-700">{review.author}</div>
-              <div className="text-sm text-gray-500">{review.city}</div>
+// Bagian Daftar Produk (Product Section)
+const ProductSection = ({ pricing, contactInfo }) => (
+    <SectionWrapper id="daftar-produk" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
+                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
+                {/* Perbaikan: Menghapus </div> yang salah di sini */}
             </div>
-          ))}
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-10 justify-center max-w-4xl mx-auto">
+                {pricing.items.map((item, index) => ( // Meneruskan index ke PriceCard
+                    <PriceCard key={item.id} item={item} contactInfo={contactInfo} index={index} />
+                ))}
+            </div>
         </div>
-      </div>
-    </section>
-  );
+    </SectionWrapper>
+);
+
+// Bagian Testimoni
+const TestimonialSection = ({ testimonials }) => (
+    <SectionWrapper id="testimoni" className="bg-white bg-lines-pattern"> {/* Tambahkan kelas pattern */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2>
+            <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-10">
+            {testimonials.reviews.map((review, index) => ( // Meneruskan index
+                <div
+                    key={review.id}
+                    className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 animated-item"
+                    style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+                >
+                    {/* Gambar avatar dihapus dari sini */}
+                    <p className="text-gray-600 text-lg italic mb-4 flex-grow">"{review.quote}"</p>
+                    <div className="font-semibold text-indigo-700 mt-auto">{review.author}</div>
+                    <div className="text-sm text-gray-500">{review.city}</div>
+                </div>
+            ))}
+            </div>
+        </div>
+    </SectionWrapper>
+);
+
+
+// Komponen FAQ Item
+const FaqItem = ({ item, index }) => { // Menerima index
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div
+            className="border-b animated-item" // Apply to the wrapper
+            style={{ animationDelay: `${index * 0.1}s` }} // Staggered delay
+        >
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex justify-between items-center text-left py-5 px-6 focus:outline-none"
+            >
+                <span className="text-lg font-medium text-gray-800">{item.q}</span>
+                <ChevronUp className={`w-5 h-5 text-indigo-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
+                <p className="text-gray-600 pb-5 px-6">{item.a}</p>
+            </div>
+        </div>
+    );
 };
 
-// --- Komponen Kontak ---
-const ContactSection = ({ contact }) => {
-    // Use custom hook for section visibility
-    const [sectionRef, isVisible] = useSectionVisibility(); 
-    return (
-        <section id="kontak" ref={sectionRef} className={`py-16 sm:py-24 bg-gradient-to-br from-indigo-700 to-purple-800 text-white transition-all duration-1000 ${isVisible ? 'opacity-100 animate-slide-in-right' : 'opacity-0 translate-x-[50px]'}`}>
+// Bagian FAQ
+const FaqSection = ({ faq }) => (
+    <SectionWrapper id="faq" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12 sm:mb-16">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2>
+                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+            </div>
+            <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+                {faq.items.map((item, index) => (
+                    <FaqItem key={index} item={item} index={index} />
+                ))}
+            </div>
+        </div>
+    </SectionWrapper>
+);
+
+
+// Bagian Kontak
+const ContactSection = ({ contact }) => (
+    <SectionWrapper id="kontak">
+        <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white py-16 sm:py-24">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
                     <h2 className="text-3xl sm:text-4xl font-bold mb-4">{contact.title}</h2>
                     <div className="w-24 h-1 bg-indigo-400 mx-auto rounded-full"></div>
                 </div>
-                <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-8 gap-y-12 items-start">
-                    <div className="space-y-6 text-center md:text-left">
-                    <div>
-                        {/* Changed MapPin icon color to amber-400 */}
-                        <h3 className="text-xl font-semibold mb-2 flex items-center justify-center md:justify-start"><MapPin className="w-6 h-6 mr-2 text-amber-400" /> Alamat Kami:</h3>
-                        <p className="text-indigo-100">{contact.address}</p>
-                    </div>
-                    <div>
-                        {/* Changed Phone icon color to amber-400 */}
-                        <h3 className="text-xl font-semibold mb-2 flex items-center justify-center md:justify-start"><Phone className="w-6 h-6 mr-2 text-amber-400" /> Telepon:</h3>
-                        <a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a>
-                    </div>
-                    <div>
-                        {/* Changed Mail icon color to amber-400 */}
-                        <h3 className="text-xl font-semibold mb-2 flex items-center justify-center md:justify-start"><Mail className="w-6 h-6 mr-2 text-amber-400" /> Email:</h3>
-                        <a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a>
-                    </div>
-                    {/* Instagram Contact */}
-                    {contact.instagramLink && contact.instagramUsername && (
-                        <div>
-                        {/* Changed Instagram icon color to amber-400 */}
-                        <h3 className="text-xl font-semibold mb-2 flex items-center justify-center md:justify-start"><Instagram className="w-6 h-6 mr-2 text-amber-400" /> Instagram:</h3>
-                        <a  
-                            href={contact.instagramLink}  
-                            target="_blank"  
-                            rel="noopener noreferrer"  
-                            className="text-indigo-100 hover:text-white transition-colors hover:underline"
-                        >
-                            @{contact.instagramUsername}
-                        </a>
+                <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-8 gap-y-12 items-center">
+                    <div
+                        className="space-y-6 text-center md:text-left animated-item-right" // Animasi slide dari kanan
+                        style={{ animationDelay: `0s` }}
+                    >
+                        {/* Alamat */}
+                        <div className="flex items-center justify-center md:justify-start">
+                            <MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
+                            <p className="text-indigo-100">{contact.address}</p>
                         </div>
-                    )}
+                        {/* Telepon */}
+                        <div className="flex items-center justify-center md:justify-start">
+                            <Phone className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
+                            <a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a>
+                        </div>
+                        {/* Email */}
+                        <div className="flex items-center justify-center md:justify-start">
+                            <Mail className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
+                            <a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a>
+                        </div>
+                        {/* Instagram */}
+                        <div className="flex items-center justify-center md:justify-start">
+                             <Instagram className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
+                             <a href={contact.instagramLink} target="_blank" rel="noopener noreferrer" className="text-indigo-100 hover:text-white transition-colors hover:underline">@{contact.instagramUsername}</a>
+                        </div>
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center">
-                        <h3 className="text-2xl font-semibold mb-6 text-white">Terhubung Langsung via WhatsApp!</h3>
-                        {/* Changed MessageCircle icon color to amber-400 */}
-                        <MessageCircle className="w-16 h-16 text-amber-400 mx-auto mb-6"/>
+                    {/* Formulir/Tombol Chat WhatsApp */}
+                    <div
+                        className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item" // Animasi slide dari bawah
+                        style={{ animationDelay: `0.15s` }} // Slight delay for the second column
+                    >
+                        <h3 className="text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3>
+                        <p className="text-indigo-200 mb-6">Hubungi kami langsung di WhatsApp!</p>
                         <a
                             href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20tertarik%20dengan%20produk%20Anda.`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            // Changed button background to amber-600
-                            className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
+                            className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
                         >
                             Chat di WhatsApp
                         </a>
-                        <p className="text-xs text-indigo-200 mt-4">Klik untuk memulai percakapan.</p>
                     </div>
                 </div>
-                {/* E-commerce Links */}
+                {/* Tautan E-commerce (jika ada) */}
                 {contact.eCommerceLinks && contact.eCommerceLinks.length > 0 && (
-                    <div className="mt-12 text-center">
-                      <h3 className="text-2xl font-semibold mb-6 text-white">Temukan Kami di E-commerce!</h3>
+                    <div className="mt-16 text-center">
+                      <h3 className="text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3>
                       <div className="flex flex-wrap justify-center gap-6">
-                        {contact.eCommerceLinks.map((platform, index) => (
+                        {contact.eCommerceLinks.map((platform, index) => ( // Meneruskan index
                           <a
-                            key={index}
+                            key={platform.name}
                             href={platform.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex flex-col items-center p-4 bg-white/10 rounded-lg shadow-md hover:bg-white/20 transition-colors transform hover:scale-105"
+                            className="flex items-center p-4 bg-white rounded-lg shadow-md hover:bg-gray-100 text-gray-800 transition-colors transform hover:scale-105 animated-item"
+                            style={{ animationDelay: `${0.4 + index * 0.1}s` }} // Staggered delay for eCommerce links
                           >
-                            {/* Changed ShoppingCart icon color to amber-300 */}
-                            <ShoppingCart className="w-10 h-10 text-amber-300 mb-2" />
-                            <span className="text-white font-medium text-lg">{platform.name}</span>
+                            <ShoppingCart className={`w-8 h-8 mr-3 ${platform.iconColor}`} />
+                            <span className="font-medium text-lg">{platform.name}</span>
                           </a>
                         ))}
                       </div>
                     </div>
                 )}
             </div>
-        </section>
-    );
-};
+        </div>
+    </SectionWrapper>
+);
 
-// --- Komponen Footer ---
+// Footer
 const Footer = ({ businessName, copyright }) => (
-  <footer className="bg-gray-800 text-gray-400 py-12">
+  <footer className="bg-gray-800 text-gray-400 py-8">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <p>&copy; {new Date().getFullYear()} {businessName}. {copyright}</p>
-      <p className="text-sm mt-2">Didesain oleh cinta <span className="text-red-500">&hearts;</span> kita.</p>
+      <p className="text-sm mt-2">Didesain dengan <span className="text-red-500">&hearts;</span> oleh Jeyo Store.</p>
     </div>
   </footer>
 );
 
-// --- Komponen Utama Aplikasi ---
+// Tombol Mengambang (Floating Buttons)
+const FloatingButtons = ({ contact }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0); // State baru untuk progress scroll
+
+    useEffect(() => {
+        const toggleVisibilityAndProgress = () => {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            // Hindari pembagian dengan nol jika totalHeight adalah 0 (misalnya pada halaman yang sangat pendek)
+            const currentScroll = window.scrollY;
+            const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0;
+
+            setIsVisible(currentScroll > 300);
+            setScrollProgress(progress);
+        };
+        window.addEventListener('scroll', toggleVisibilityAndProgress);
+        toggleVisibilityAndProgress(); // Panggil saat mount untuk set status awal
+        return () => window.removeEventListener('scroll', toggleVisibilityAndProgress);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Untuk lingkaran SVG
+    const radius = 20; // Radius lingkaran
+    const circumference = 2 * Math.PI * radius;
+    // Stroke dashoffset dikurangi dari keliling untuk menunjukkan progress
+    const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
+
+    return (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
+             {/* Tombol WhatsApp */}
+             <a
+                href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-transform transform hover:scale-110 flex items-center justify-center group"
+                aria-label="Chat di WhatsApp" // Untuk aksesibilitas
+            >
+                <MessageCircle className="w-8 h-8" />
+            </a>
+            {/* Tombol Scroll ke Atas dengan Indikator Progress */}
+            {isVisible && (
+                <button
+                    onClick={scrollToTop}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg transition-all duration-300 animate-fade-in-up relative flex items-center justify-center"
+                    aria-label="Kembali ke atas" // Untuk aksesibilitas
+                    style={{ width: '56px', height: '56px', padding: '0' }} // Pastikan ukuran tetap untuk SVG
+                >
+                    <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 48 48">
+                        {/* Lingkaran latar belakang */}
+                        <circle
+                            className="text-gray-400"
+                            strokeWidth="4"
+                            stroke="currentColor"
+                            fill="transparent"
+                            r={radius}
+                            cx="28"
+                            cy="28"
+                        />
+                        {/* Lingkaran progress */}
+                        <circle
+                            className="text-indigo-200"
+                            strokeWidth="4"
+                            strokeDasharray={circumference}
+                            strokeDashoffset={strokeDashoffset}
+                            strokeLinecap="round"
+                            stroke="currentColor"
+                            fill="transparent"
+                            r={radius}
+                            cx="28"
+                            cy="28"
+                        />
+                    </svg>
+                    <ChevronUp className="w-7 h-7 relative z-10" /> {/* Ikon di atas SVG */}
+                </button>
+            )}
+        </div>
+    );
+};
+
+
+// Komponen Utama Aplikasi
 const App = () => {
-  const { businessName, hero, about, serviceHours, pricing, testimonials, contact, footer } = MOCK_DATA;
+  // Destrukturisasi data dari MOCK_DATA
+  const { businessName, hero, about, advantages, serviceHours, pricing, testimonials, faq, contact, footer } = MOCK_DATA;
+  // Tautan navigasi untuk Navbar
   const navLinks = [
+    { name: 'Keunggulan', href: '#keunggulan' },
     { name: 'Tentang Kami', href: '#tentang-kami' },
-    { name: 'Jam Layanan', href: '#jam-layanan' },
+    { name: 'Jam Operasional', href: '#jam-operasional' }, // Menambahkan Jam Operasional
     { name: 'Daftar Produk', href: '#daftar-produk' },
     { name: 'Testimoni', href: '#testimoni' },
+    { name: 'FAQ', href: '#faq'},
     { name: 'Kontak', href: '#kontak' },
   ];
 
-  // Enable smooth scrolling for the entire document
+  // Mengaktifkan smooth scroll untuk seluruh halaman
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
     return () => {
-      document.documentElement.style.scrollBehavior = 'auto'; // Revert on unmount
+      document.documentElement.style.scrollBehavior = 'auto'; // Mengembalikan ke default saat unmount
     };
   }, []);
 
-  // Inject custom CSS for animations
+  // Memasukkan keyframes CSS untuk animasi ke dalam DOM
   useEffect(() => {
     const styleId = 'custom-animations-style';
     let styleElement = document.getElementById(styleId);
@@ -651,66 +790,86 @@ const App = () => {
       document.head.appendChild(styleElement);
     }
     
-    // Define keyframe animations and utility classes
+    // Keyframes animasi dan kelas Tailwind kustom
     styleElement.textContent = `
-      @keyframes fadeInDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
-      @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-      /* Slide-in animations only for medium screens and up */
-      @media (min-width: 768px) {
-        @keyframes slideInLeft { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
-        @keyframes slideInRight { 0% { opacity: 0; transform: translateX(50px); } 100% { opacity: 1; transform: translateX(0); } }
-        .animate-slide-in-left { animation: slideInLeft 0.8s ease-out forwards; will-change: transform, opacity; }
-        .animate-slide-in-right { animation: slideInRight 0.8s ease-out forwards; will-change: transform, opacity; }
+      @keyframes heroFadeInDown {
+        0% { opacity: 0; transform: translateY(-30px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
       }
+      @keyframes heroFadeInUp {
+        0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      
+      .animate-hero-fade-in-down { animation: heroFadeInDown 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
+      .animate-hero-fade-in-up { animation: heroFadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
 
+      @keyframes slideInUpStaggered { 0% { opacity: 0; transform: translateY(50px); } 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes slideInRightStaggered { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
+      
       .animate-fade-in-down { animation: fadeInDown 0.6s ease-out forwards; opacity: 0; }
       .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-      
       .animation-delay-300 { animation-delay: 0.3s; }
       .animation-delay-600 { animation-delay: 0.6s; }
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+      .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
 
-      /* Custom CSS for pulse animation on icon */
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+      .animated-item {
+        opacity: 0; /* Start invisible */
+        animation: slideInUpStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
-      .animate-pulse {
-        animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      .animated-item-right {
+        opacity: 0;
+        animation: slideInRightStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+      
+      /* Subtle background patterns */
+      .bg-dots-pattern {
+        background-image: radial-gradient(#e5e7eb 1px, transparent 1px); /* light grey dots */
+        background-size: 16px 16px; /* spacing of dots */
+        background-position: 0 0;
+      }
+      .bg-lines-pattern {
+        background-image: linear-gradient(to right, #f3f4f6 1px, transparent 1px), linear-gradient(to bottom, #f3f4f6 1px, transparent 1px);
+        background-size: 16px 16px;
+        background-position: 0 0;
       }
     `;
     
     return () => {
-      if (styleElement) {
-        styleElement.remove(); // Clean up style tag on component unmount
-      }
+      if (styleElement) styleElement.remove(); // Bersihkan elemen style saat unmount
     };
   }, []);
 
 
   return (
-    // Mengubah latar belakang menjadi gradasi dari warna terang ke gelap
     <div
-      className="font-inter antialiased text-gray-800 min-h-screen bg-fixed bg-cover bg-center"
-      style={{ backgroundImage: 'linear-gradient(to bottom, #f8fafc, #e0e7ff)' }}
+      className="font-inter antialiased text-gray-800 min-h-screen bg-gray-50"
     >
-      {/* Komponen Navbar untuk navigasi */}
+      {/* Navbar */}
       <Navbar businessName={businessName} navLinks={navLinks} />
-      <main>
-        {/* Bagian Hero dengan konten dinamis */}
+      <main className="pt-20"> {/* Padding top untuk menghindari konten tertutup navbar */}
+        {/* Bagian Hero */}
         <HeroSection hero={hero} />
+        {/* Bagian Keunggulan */}
+        <AdvantagesSection advantages={advantages} />
         {/* Bagian Tentang Kami */}
         <AboutSection about={about} />
-        {/* Bagian Jam Layanan */}
+        {/* Bagian Jam Operasional */}
         <ServiceHoursSection serviceHours={serviceHours} />
-        {/* Bagian daftar produk */}
+        {/* Bagian Daftar Produk */}
         <ProductSection pricing={pricing} contactInfo={contact} />
         {/* Bagian Testimoni */}
         <TestimonialSection testimonials={testimonials} />
-        {/* Bagian Kontak Kami */}
+        {/* Bagian FAQ */}
+        <FaqSection faq={faq} />
+        {/* Bagian Kontak */}
         <ContactSection contact={contact} />
       </main>
-      {/* Komponen Footer */}
+      {/* Footer */}
       <Footer businessName={businessName} copyright={footer.copyright} />
+      {/* Tombol Mengambang (WhatsApp dan Scroll ke Atas) */}
+      <FloatingButtons contact={contact} />
     </div>
   );
 };
