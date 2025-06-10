@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom'; // Import ReactDOM untuk createPortal
-import { ShieldCheck, MapPin, Phone, Mail, MessageCircle, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Tag, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent } from 'lucide-react'; // Mengimpor Flame dan BadgePercent
+// ReactDOM tidak digunakan, jadi impornya dihapus untuk menjaga kebersihan kode.
+import { ShieldCheck, MapPin, Phone, Mail, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent, MessageCircle as WhatsAppIcon } from 'lucide-react';
 
 // Data Mockup untuk konten landing page
+// URL gambar hero diperbarui dengan gambar yang lebih relevan dengan produk makanan ringan.
 const MOCK_DATA = {
   businessName: "Jeyo Store Official",
   hero: {
     title: "Selamat Datang di Jeyo Store",
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://cdn.pixabay.com/photo/2021/02/25/12/03/courier-6048941_1280.png",
-    mobileImageUrl: "https://cdn.pixabay.com/photo/2017/08/17/10/24/delivery-2651147_1280.png", // URL gambar mobile yang valid
+    imageUrl: "https://images.pexels.com/photos/2679501/pexels-photo-2679501.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", // Gambar baru yang lebih relevan
+    mobileImageUrl: "https://images.pexels.com/photos/4114133/pexels-photo-4114133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", // Gambar mobile baru
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -116,13 +117,14 @@ const useSectionVisibility = (ref, threshold = 0.1) => {
       { threshold } // Persentase bagian yang terlihat untuk memicu
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current); // Bersihkan observer saat komponen di-unmount
+      if (currentRef) {
+        observer.unobserve(currentRef); // Bersihkan observer saat komponen di-unmount
       }
     };
   }, [ref, threshold]);
@@ -143,28 +145,29 @@ const Navbar = ({ businessName, navLinks }) => {
     'Testimoni': MessageSquare,
     'FAQ': HelpCircle,
     'Kontak': PhoneCall,
-    'Jam Operasional': Clock, // Menambahkan ikon untuk Jam Operasional
+    'Jam Operasional': Clock,
   };
 
   // Efek untuk menandai tautan navigasi aktif berdasarkan posisi scroll
   useEffect(() => {
     const handleScroll = () => {
-        let currentSectionId = '';
-        const offset = window.innerHeight * 0.4; // Menentukan offset untuk aktivasi tautan
-        [...navLinks].reverse().forEach(link => { // Memulai dari bawah untuk akurasi yang lebih baik
-            const section = document.getElementById(link.href.substring(1));
-            if (section && section.offsetTop <= window.scrollY + offset) {
-                if (!currentSectionId) currentSectionId = link.href.substring(1);
-            }
-        });
-        // Set tautan aktif atau biarkan kosong jika di bagian atas halaman
-        setActiveLink(currentSectionId || (window.scrollY < 200 ? '' : activeLink));
+      let currentSectionId = '';
+      const offset = window.innerHeight * 0.4; // Menentukan offset untuk aktivasi tautan
+      // Iterasi dari belakang untuk akurasi yang lebih baik saat scroll ke atas
+      [...navLinks].reverse().forEach(link => { 
+        const section = document.getElementById(link.href.substring(1));
+        if (section && section.offsetTop <= window.scrollY + offset) {
+          if (!currentSectionId) currentSectionId = link.href.substring(1);
+        }
+      });
+      // Set tautan aktif atau biarkan kosong jika di bagian atas halaman
+      setActiveLink(currentSectionId || (window.scrollY < 200 ? '' : activeLink));
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true }); // Menggunakan passive listener untuk performa
-    handleScroll(); // Panggil saat mount untuk set posisi awal
-    return () => window.removeEventListener('scroll', handleScroll); // Bersihkan listener
-  }, [navLinks]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [navLinks, activeLink]);
 
 
   // Fungsi untuk menangani klik tautan navigasi
@@ -175,7 +178,7 @@ const Navbar = ({ businessName, navLinks }) => {
       const navbarHeight = document.querySelector('nav')?.offsetHeight || 70; // Dapatkan tinggi navbar
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
-        top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
+        top: elementPosition - navbarHeight - 20, // Offset agar tidak tertutup navbar
         behavior: 'smooth'
       });
     }
@@ -192,8 +195,8 @@ const Navbar = ({ businessName, navLinks }) => {
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="text-xl md:text-2xl font-extrabold flex items-center group"
             >
-              <Flame className="w-8 h-8 mr-2 text-blue-500" /> {/* Mengubah ikon menjadi Flame dan warnanya */}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600">{businessName}</span> {/* Menyesuaikan gradien warna */}
+              <Flame className="w-8 h-8 mr-2 text-blue-500" />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600">{businessName}</span>
             </a>
           </div>
           {/* Tautan Navigasi Desktop */}
@@ -209,7 +212,7 @@ const Navbar = ({ businessName, navLinks }) => {
                     onClick={(e) => { e.preventDefault(); handleNavClick(link.href);}}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 flex items-center group relative ${
                       isActive
-                        ? 'text-indigo-700' // Slightly deeper indigo for active state
+                        ? 'text-indigo-700'
                         : 'text-gray-600 hover:text-indigo-700'
                     }`}
                   >
@@ -227,6 +230,7 @@ const Navbar = ({ businessName, navLinks }) => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 hover:text-indigo-600 focus:outline-none p-2 rounded-md"
+              aria-label="Buka menu"
             >
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} />
@@ -265,12 +269,12 @@ const Navbar = ({ businessName, navLinks }) => {
 };
 
 // Komponen Pembungkus Bagian dengan efek animasi
-const SectionWrapper = ({ children, id, className = '' }) => { // Tambahkan className prop
+const SectionWrapper = ({ children, id, className = '' }) => {
     const sectionRef = useRef(null);
-    const isVisible = useSectionVisibility(sectionRef); // Menggunakan hook untuk deteksi visibilitas
+    const isVisible = useSectionVisibility(sectionRef);
 
     return (
-        <section id={id} ref={sectionRef} className={`py-12 sm:py-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}> {/* Mengurangi padding vertikal */}
+        <section id={id} ref={sectionRef} className={`py-12 sm:py-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}>
             {children}
         </section>
     );
@@ -279,14 +283,12 @@ const SectionWrapper = ({ children, id, className = '' }) => { // Tambahkan clas
 // Komponen Hero Section
 const HeroSection = ({ hero }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [currentImageUrl, setCurrentImageUrl] = useState(hero.imageUrl); // State untuk menyimpan URL gambar saat ini
+  const [currentImageUrl, setCurrentImageUrl] = useState(hero.imageUrl);
 
-  // Efek untuk melacak posisi scroll dan menyesuaikan gambar hero
   useEffect(() => {
     const handleScrollAndResize = () => {
       setScrollPosition(window.scrollY);
-      // Sesuaikan gambar berdasarkan lebar layar
-      if (window.innerWidth < 768 && hero.mobileImageUrl) { // Misalnya, di bawah 768px (ukuran md di Tailwind)
+      if (window.innerWidth < 768 && hero.mobileImageUrl) {
         setCurrentImageUrl(hero.mobileImageUrl);
       } else {
         setCurrentImageUrl(hero.imageUrl);
@@ -294,37 +296,34 @@ const HeroSection = ({ hero }) => {
     };
 
     window.addEventListener('scroll', handleScrollAndResize);
-    window.addEventListener('resize', handleScrollAndResize); // Tambahkan event listener untuk resize
-    handleScrollAndResize(); // Panggil saat mount untuk set posisi awal dan gambar awal
+    window.addEventListener('resize', handleScrollAndResize);
+    handleScrollAndResize();
     return () => {
       window.removeEventListener('scroll', handleScrollAndResize);
-      window.removeEventListener('resize', handleScrollAndResize); // Bersihkan listener
+      window.removeEventListener('resize', handleScrollAndResize);
     };
-  }, [hero.imageUrl, hero.mobileImageUrl]); // Dependensi ditambahkan agar efek terpicu jika URL gambar berubah
+  }, [hero.imageUrl, hero.mobileImageUrl]);
 
   return (
     <section  
       id="hero"  
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20 overflow-hidden" // overflow-hidden untuk mencegah scrollbar saat parallax
-      style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${currentImageUrl})` }} // Gunakan currentImageUrl
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20 overflow-hidden"
+      style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${currentImageUrl})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
-        {/* Judul Hero dengan animasi pembukaan dan parallax */}
         <h1
-          className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down" // Mengurangi ukuran font di mobile
-          style={{ transform: `translateY(${scrollPosition * 0.3}px)` }} // Efek parallax
+          className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
+          style={{ transform: `translateY(${scrollPosition * 0.3}px)` }}
         >
           {hero.title}
         </h1>
-        {/* Subtitle Hero dengan animasi pembukaan dan parallax */}
         <p
-          className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300" // Mengurangi ukuran font di mobile
-          style={{ transform: `translateY(${scrollPosition * 0.2}px)` }} // Efek parallax
+          className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300"
+          style={{ transform: `translateY(${scrollPosition * 0.2}px)` }}
         >
           {hero.subtitle}
         </p>
-        {/* Tombol CTA Hero dengan animasi pembukaan dan parallax */}
         <a
           href="#daftar-produk"  
           onClick={(e) => {
@@ -334,13 +333,13 @@ const HeroSection = ({ hero }) => {
               const navbarHeight = document.querySelector('nav')?.offsetHeight || 70;
               const elementPosition = productSection.getBoundingClientRect().top + window.scrollY;
               window.scrollTo({
-                top: elementPosition - navbarHeight - 20, // Offset untuk scroll agar tidak tertutup navbar
+                top: elementPosition - navbarHeight - 20,
                 behavior: 'smooth'
               });
             }
           }}
           className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
-          style={{ transform: `translateY(${scrollPosition * 0.1}px)` }} // Efek parallax
+          style={{ transform: `translateY(${scrollPosition * 0.1}px)` }}
         >
           {hero.cta}
           <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
@@ -352,10 +351,10 @@ const HeroSection = ({ hero }) => {
 
 // Bagian Keunggulan (Advantages Section)
 const AdvantagesSection = ({ advantages }) => (
-    <SectionWrapper id="keunggulan" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+    <SectionWrapper id="keunggulan" className="bg-white bg-dots-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2> {/* Mengurangi ukuran font di mobile */}
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2>
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -363,13 +362,13 @@ const AdvantagesSection = ({ advantages }) => (
                     <div
                         key={index}
                         className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
-                        style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+                        style={{ animationDelay: `${index * 0.15}s` }}
                     >
                         <div className="inline-block p-4 bg-indigo-100 rounded-full mb-4">
                             <item.icon className="w-8 h-8 text-indigo-600" />
                         </div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm">{item.description}</p> {/* Memastikan text-sm */}
+                        <p className="text-gray-600 text-sm">{item.description}</p>
                     </div>
                 ))}
             </div>
@@ -380,18 +379,18 @@ const AdvantagesSection = ({ advantages }) => (
 
 // Bagian Tentang Kami (About Section)
 const AboutSection = ({ about }) => (
-    <SectionWrapper id="tentang-kami" className="bg-slate-50 bg-lines-pattern"> {/* Tambahkan kelas pattern */}
+    <SectionWrapper id="tentang-kami" className="bg-slate-50 bg-lines-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2> {/* Mengurangi ukuran font di mobile */}
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2>
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
-            <div className="max-w-3xl mx-auto text-gray-700 text-base md:text-lg leading-relaxed"> {/* Mengurangi ukuran font di mobile */}
+            <div className="max-w-3xl mx-auto text-gray-700 text-base md:text-lg leading-relaxed">
                 <p className="mb-6 whitespace-pre-line text-center md:text-left">{about.description1}</p>
                 <p className="mb-4 whitespace-pre-line text-center md:text-left">{about.description2Intro}</p>
-                <ul className="mb-6 space-y-3 pl-0"> {/* pl-0 untuk menghilangkan padding default list */}
+                <ul className="mb-6 space-y-3 pl-0">
                 {about.commitments.map((commitment, index) => (
-                    <li key={index} className="flex items-start animated-item" style={{ animationDelay: `${index * 0.1}s` }}> {/* Apply staggered animation */}
+                    <li key={index} className="flex items-start animated-item" style={{ animationDelay: `${index * 0.1}s` }}>
                     <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
                     <span>{commitment}</span>
                     </li>
@@ -405,17 +404,17 @@ const AboutSection = ({ about }) => (
 
 // Komponen Jam Operasional
 const ServiceHoursSection = ({ serviceHours }) => (
-  <SectionWrapper id="jam-operasional" className="bg-white bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+  <SectionWrapper id="jam-operasional" className="bg-white bg-dots-pattern">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12 sm:mb-16">
-        <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2> {/* Mengurangi ukuran font di mobile */}
+        <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2>
         <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
       </div>
-      <div className="max-w-2xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden p-8 animated-item"> {/* Apply animation to the main box */}
+      <div className="max-w-2xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden p-8 animated-item">
         <ul className="space-y-4">
           {serviceHours.schedule.map((entry, index) => (
-            <li key={index} className={`flex justify-between items-center text-base md:text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`} // Mengurangi ukuran font di mobile
-                style={{ animationDelay: `${0.1 + index * 0.1}s` }}> {/* Staggered delay for each schedule item */}
+            <li key={index} className={`flex justify-between items-center text-base md:text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`}
+                style={{ animationDelay: `${0.1 + index * 0.1}s` }}>
               <span className="flex items-center">
                 <Clock className="w-6 h-6 mr-3 text-indigo-500" />
                 {entry.day}
@@ -433,25 +432,22 @@ const ServiceHoursSection = ({ serviceHours }) => (
 );
 
 // Komponen Kartu Produk
-const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
+const PriceCard = ({ item, contactInfo, index }) => {
   const [selectedSize, setSelectedSize] = useState(item.sizes ? item.sizes[0] : null);
 
-  // Set ukuran pertama sebagai default saat komponen dimuat
   useEffect(() => {
     if (item.sizes && item.sizes.length > 0) {
       setSelectedSize(item.sizes[0]);
     }
-  }, [item]); // Terpicu ulang jika item berubah
+  }, [item]);
 
-  // Fungsi untuk menangani tombol "Pesan Sekarang"
   const handleOrderClick = () => {
     let message = `Halo Jeyo Store, saya tertarik untuk memesan produk: ${item.name}`;
     if (selectedSize) {
       message += ` (${selectedSize.name} - ${selectedSize.price})`;
-    } else if (item.price) { // Jika tidak ada ukuran, gunakan harga langsung
+    } else if (item.price) {
       message += ` (Harga: ${item.price})`;
     }
-    // Buka WhatsApp dengan pesan yang sudah diformat
     window.open(`https://wa.me/${contactInfo.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -459,42 +455,37 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
 
   return (
     <div
-      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
-      style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 animated-item"
+      style={{ animationDelay: `${index * 0.15}s` }}
     >
-      <div className="relative h-56">
+      <div className="relative h-56 group">
         {!isImageLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-t-xl">
-            {/* Spinner sederhana */}
             <svg className="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
         )}
-        {/* Gambar Produk */}
+        {/* ALT TEXT DIPERBARUI: Teks alternatif yang lebih deskriptif untuk aksesibilitas */}
         <img  
             src={item.imageUrl}  
-            alt={`[Gambar ${item.name}]`}
+            alt={`Gambar produk ${item.name} dari Jeyo Store`}
             className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${isImageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
-            onLoad={() => setIsImageLoaded(true)} // Set isImageLoaded true setelah gambar berhasil dimuat
-            onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/FFCDD2/B71C1C?text=Gagal+Muat&font=inter"; }} // Fallback gambar
+            onLoad={() => setIsImageLoaded(true)}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src="https://placehold.co/600x400/FFCDD2/B71C1C?text=Gagal+Muat&font=inter"; }}
         />
-        {/* Overlay untuk efek hover */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-opacity duration-300"></div>
-        {/* Label "Populer!" jika ada di fitur */}
         {item.features && item.features.includes("Populer") && (
-            <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg"> {/* Changed color */}
+            <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
                 Populer!
             </div>
         )}
       </div>
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3> {/* Mengurangi ukuran font */}
-        {/* min-h-[60px] untuk menjaga tinggi deskripsi agar konsisten */}
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3>
         <p className="text-gray-600 text-sm mb-4 flex-grow min-h-[60px]">{item.description}</p>  
 
-        {/* Varian Rasa (jika ada) */}
         {item.flavors && item.flavors.length > 0 && (
           <div className="mb-4">
             <p className="text-xs font-semibold text-purple-600 mb-2">Varian Rasa:</p>
@@ -508,7 +499,6 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
           </div>
         )}
 
-        {/* Pilihan Ukuran (jika ada) */}
         {item.sizes && item.sizes.length > 0 && (
           <div className="mb-4">
             <p className="text-xs font-semibold text-orange-600 mb-2">Pilih Ukuran:</p>
@@ -526,16 +516,14 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
           </div>
         )}
 
-        {/* Harga Produk */}
-        <p className="text-2xl font-bold text-indigo-700 mb-6 mt-auto pt-4"> {/* Mengurangi ukuran font */}
+        <p className="text-2xl font-bold text-indigo-700 mb-6 mt-auto pt-4">
           {selectedSize ? selectedSize.price : item.price}
         </p>
-        {/* Tombol Pesan Sekarang */}
         <button
           onClick={handleOrderClick}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-300 inline-flex items-center justify-center group"
         >
-          Pesanan Sekarang <ShoppingCart className="ml-2 h-5 w-5 transform group-hover:rotate-12 transition-transform" />
+          Pesan Sekarang <ShoppingCart className="ml-2 h-5 w-5 transform group-hover:rotate-12 transition-transform" />
         </button>
       </div>
     </div>
@@ -544,15 +532,15 @@ const PriceCard = ({ item, contactInfo, index }) => { // Menerima index
 
 // Bagian Daftar Produk (Product Section)
 const ProductSection = ({ pricing, contactInfo }) => (
-    <SectionWrapper id="daftar-produk" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+    <SectionWrapper id="daftar-produk" className="bg-slate-50 bg-dots-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2> {/* Mengurangi ukuran font di mobile */}
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
                 <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
             </div>
             <div className="grid md:grid-cols-2 gap-8 sm:gap-10 justify-center max-w-4xl mx-auto">
-                {pricing.items.map((item, index) => ( // Meneruskan index ke PriceCard
+                {pricing.items.map((item, index) => (
                     <PriceCard key={item.id} item={item} contactInfo={contactInfo} index={index} />
                 ))}
             </div>
@@ -562,22 +550,21 @@ const ProductSection = ({ pricing, contactInfo }) => (
 
 // Bagian Testimoni
 const TestimonialSection = ({ testimonials }) => (
-    <SectionWrapper id="testimoni" className="bg-white bg-lines-pattern"> {/* Tambahkan kelas pattern */}
+    <SectionWrapper id="testimoni" className="bg-white bg-lines-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2> {/* Mengurangi ukuran font di mobile */}
+            <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2>
             <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
             </div>
             <div className="grid md:grid-cols-2 gap-8 sm:gap-10">
-            {testimonials.reviews.map((review, index) => ( // Meneruskan index
+            {testimonials.reviews.map((review, index) => (
                 <div
                     key={review.id}
                     className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 animated-item"
-                    style={{ animationDelay: `${index * 0.15}s` }} // Staggered delay
+                    style={{ animationDelay: `${index * 0.15}s` }}
                 >
-                    {/* Gambar avatar dihapus dari sini */}
-                    <p className="text-base md:text-lg italic mb-4 flex-grow">"{review.quote}"</p> {/* Mengurangi ukuran font di mobile */}
+                    <p className="text-base md:text-lg italic mb-4 flex-grow">"{review.quote}"</p>
                     <div className="font-semibold text-indigo-700 mt-auto">{review.author}</div>
                     <div className="text-sm text-gray-500">{review.city}</div>
                 </div>
@@ -589,18 +576,18 @@ const TestimonialSection = ({ testimonials }) => (
 
 
 // Komponen FAQ Item
-const FaqItem = ({ item, index }) => { // Menerima index
+const FaqItem = ({ item, index }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div
-            className="border-b animated-item" // Apply to the wrapper
-            style={{ animationDelay: `${index * 0.1}s` }} // Staggered delay
+            className="border-b animated-item"
+            style={{ animationDelay: `${index * 0.1}s` }}
         >
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex justify-between items-center text-left py-5 px-6 focus:outline-none"
             >
-                <span className="text-base md:text-lg font-medium text-gray-800">{item.q}</span> {/* Mengurangi ukuran font di mobile */}
+                <span className="text-base md:text-lg font-medium text-gray-800">{item.q}</span>
                 <ChevronUp className={`w-5 h-5 text-indigo-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
@@ -612,10 +599,10 @@ const FaqItem = ({ item, index }) => { // Menerima index
 
 // Bagian FAQ
 const FaqSection = ({ faq }) => (
-    <SectionWrapper id="faq" className="bg-slate-50 bg-dots-pattern"> {/* Tambahkan kelas pattern */}
+    <SectionWrapper id="faq" className="bg-slate-50 bg-dots-pattern">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2> {/* Mengurangi ukuran font di mobile */}
+                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2>
                 <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
             </div>
             <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -634,43 +621,38 @@ const ContactSection = ({ contact }) => (
         <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white py-16 sm:py-24">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-2xl sm:text-4xl font-bold mb-4">{contact.title}</h2> {/* Mengurangi ukuran font di mobile */}
+                    <h2 className="text-2xl sm:text-4xl font-bold mb-4">{contact.title}</h2>
                     <div className="w-24 h-1 bg-indigo-400 mx-auto rounded-full"></div>
                 </div>
                 <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-8 gap-y-12 items-center">
                     <div
-                        className="space-y-6 text-center md:text-left animated-item-right" // Animasi slide dari kanan
+                        className="space-y-6 text-center md:text-left animated-item-right"
                         style={{ animationDelay: `0s` }}
                     >
-                        {/* Alamat */}
-                        <div className="flex items-center justify-center md:justify-start">
-                            <MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
-                            <p className="text-indigo-100">
-                                {contact.address}
-                            </p>
-                        </div>
-                        {/* Telepon */}
-                        <div className="flex items-center justify-center md:justify-start">
-                            <Phone className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
-                            <a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a>
-                        </div>
-                        {/* Email */}
-                        <div className="flex items-center justify-center md:justify-start">
-                            <Mail className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
-                            <a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a>
-                        </div>
-                        {/* Instagram */}
-                        <div className="flex items-center justify-center md:justify-start">
-                             <Instagram className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /> {/* Changed color */}
-                             <a href={contact.instagramLink} target="_blank" rel="noopener noreferrer" className="text-indigo-100 hover:text-white transition-colors hover:underline">@{contact.instagramUsername}</a>
-                        </div>
+                        {/* Alamat, Telepon, Email, Instagram */}
+                         <div className="flex items-center justify-center md:justify-start">
+                             <MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
+                             <p className="text-indigo-100">{contact.address}</p>
+                         </div>
+                         <div className="flex items-center justify-center md:justify-start">
+                             <Phone className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
+                             <a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a>
+                         </div>
+                         <div className="flex items-center justify-center md:justify-start">
+                             <Mail className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
+                             <a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a>
+                         </div>
+                         <div className="flex items-center justify-center md:justify-start">
+                              <Instagram className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
+                              <a href={contact.instagramLink} target="_blank" rel="noopener noreferrer" className="text-indigo-100 hover:text-white transition-colors hover:underline">@{contact.instagramUsername}</a>
+                         </div>
                     </div>
-                    {/* Formulir/Tombol Chat WhatsApp */}
+                    {/* Tombol Chat WhatsApp */}
                     <div
-                        className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item" // Animasi slide dari bawah
-                        style={{ animationDelay: `0.15s` }} // Slight delay for the second column
+                        className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item"
+                        style={{ animationDelay: `0.15s` }}
                     >
-                        <h3 className="text-xl md:text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3> {/* Mengurangi ukuran font di mobile */}
+                        <h3 className="text-xl md:text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3>
                         <p className="text-indigo-200 mb-6">Hubungi kami langsung di WhatsApp!</p>
                         <a
                             href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20tertarik%20dengan%20produk%20Anda.`}
@@ -682,23 +664,22 @@ const ContactSection = ({ contact }) => (
                         </a>
                     </div>
                 </div>
-                {/* Tautan E-commerce (jika ada) */}
+                {/* Tautan E-commerce */}
                 {contact.eCommerceLinks && contact.eCommerceLinks.length > 0 && (
                     <div className="mt-16 text-center">
-                      <h3 className="text-xl md:text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3> {/* Mengurangi ukuran font di mobile */}
+                      <h3 className="text-xl md:text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3>
                       <div className="flex flex-wrap justify-center gap-6">
-                        {contact.eCommerceLinks.map((platform, index) => ( // Meneruskan index
+                        {contact.eCommerceLinks.map((platform, index) => (
                           <a
                             key={platform.name}
                             href={platform.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center p-4 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 text-white transition-colors transform hover:scale-105 animated-item" // Diubah menjadi full biru
-                            style={{ animationDelay: `${0.4 + index * 0.1}s` }} // Staggered delay for eCommerce links
+                            className="flex items-center p-4 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 text-white transition-colors transform hover:scale-105 animated-item"
+                            style={{ animationDelay: `${0.4 + index * 0.1}s` }}
                           >
-                            {/* Ikon sekarang akan menjadi putih agar kontras dengan latar belakang biru */}
                             <ShoppingCart className={`w-8 h-8 mr-3 text-white`} /> 
-                            <span className="font-medium text-base md:text-lg">{platform.name}</span> {/* Mengurangi ukuran font di mobile */}
+                            <span className="font-medium text-base md:text-lg">{platform.name}</span>
                           </a>
                         ))}
                       </div>
@@ -719,16 +700,66 @@ const Footer = ({ businessName, copyright }) => (
   </footer>
 );
 
+// FITUR BARU: Tombol Aksi Mengambang (Scroll to Top & WhatsApp)
+const FloatingButtons = ({ whatsappNumber }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Tampilkan tombol setelah scroll melewati 400px
+    const toggleVisibility = () => {
+        if (window.pageYOffset > 400) {
+            setIsVisible(true);
+        } else {
+            setIsVisible(false);
+        }
+    };
+
+    // Scroll ke atas halaman
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', toggleVisibility);
+        return () => window.removeEventListener('scroll', toggleVisibility);
+    }, []);
+
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20ingin%20bertanya%20tentang%20produk%20Anda.`;
+
+    return (
+        <div className={`fixed bottom-5 right-5 z-50 flex flex-col items-center gap-3 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+             {/* Tombol WhatsApp */}
+            <a 
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transform hover:scale-110 transition-all duration-200 animate-pulse-effect"
+              aria-label="Chat di WhatsApp"
+            >
+                <WhatsAppIcon className="h-6 w-6" />
+            </a>
+            {/* Tombol Scroll ke Atas */}
+            <button
+                onClick={scrollToTop}
+                className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 transform hover:scale-110 transition-all duration-200"
+                aria-label="Kembali ke atas"
+            >
+                <ChevronUp className="h-6 w-6" />
+            </button>
+        </div>
+    );
+};
+
 
 // Komponen Utama Aplikasi
 const App = () => {
-  // Destrukturisasi data dari MOCK_DATA
   const { businessName, hero, about, advantages, serviceHours, pricing, testimonials, faq, contact, footer } = MOCK_DATA;
-  // Tautan navigasi untuk Navbar
   const navLinks = [
     { name: 'Keunggulan', href: '#keunggulan' },
     { name: 'Tentang Kami', href: '#tentang-kami' },
-    { name: 'Jam Operasional', href: '#jam-operasional' }, // Menambahkan Jam Operasional
+    { name: 'Jam Operasional', href: '#jam-operasional' },
     { name: 'Daftar Produk', href: '#daftar-produk' },
     { name: 'Testimoni', href: '#testimoni' },
     { name: 'FAQ', href: '#faq'},
@@ -739,7 +770,7 @@ const App = () => {
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
     return () => {
-      document.documentElement.style.scrollBehavior = 'auto'; // Mengembalikan ke default saat unmount
+      document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
 
@@ -756,14 +787,8 @@ const App = () => {
     
     // Keyframes animasi dan kelas Tailwind kustom
     styleElement.textContent = `
-      @keyframes heroFadeInDown {
-        0% { opacity: 0; transform: translateY(-30px) scale(0.95); }
-        100% { opacity: 1; transform: translateY(0) scale(1); }
-      }
-      @keyframes heroFadeInUp {
-        0% { opacity: 0; transform: translateY(30px) scale(0.95); }
-        100% { opacity: 1; transform: translateY(0) scale(1); }
-      }
+      @keyframes heroFadeInDown { 0% { opacity: 0; transform: translateY(-30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+      @keyframes heroFadeInUp { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
       
       .animate-hero-fade-in-down { animation: heroFadeInDown 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
       .animate-hero-fade-in-up { animation: heroFadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
@@ -771,44 +796,36 @@ const App = () => {
       @keyframes slideInUpStaggered { 0% { opacity: 0; transform: translateY(50px); } 100% { opacity: 1; transform: translateY(0); } }
       @keyframes slideInRightStaggered { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
       
-      .animate-fade-in-down { animation: fadeInDown 0.6s ease-out forwards; opacity: 0; }
-      .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
       .animation-delay-300 { animation-delay: 0.3s; }
       .animation-delay-600 { animation-delay: 0.6s; }
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-      .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
 
       .animated-item {
-        opacity: 0; /* Start invisible */
+        opacity: 0;
         animation: slideInUpStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
       .animated-item-right {
         opacity: 0;
         animation: slideInRightStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
-      /* New keyframe for pulse effect for floating buttons */
-      @keyframes pulseEffect {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
+      @keyframes pulseEffect { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } }
       .animate-pulse-effect {
         animation: pulseEffect 2s infinite ease-in-out;
       }
-      /* Subtle background patterns */
       .bg-dots-pattern {
-        background-image: radial-gradient(#d1d5db 1px, transparent 1px); /* darker grey dots */
-        background-size: 20px 20px; /* larger spacing */
+        background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+        background-size: 20px 20px;
         background-position: 0 0;
       }
       .bg-lines-pattern {
-        background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px); /* darker grey lines */
-        background-size: 20px 20px; /* larger spacing */
+        background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+        background-size: 20px 20px;
         background-position: 0 0;
       }
     `;
     
     return () => {
-      if (styleElement) styleElement.remove(); // Bersihkan elemen style saat unmount
+      const el = document.getElementById(styleId);
+      if (el) el.remove();
     };
   }, []);
 
@@ -817,29 +834,20 @@ const App = () => {
     <div
       className="font-inter antialiased text-gray-800 min-h-screen bg-gray-50"
     >
-      {/* Navbar */}
       <Navbar businessName={businessName} navLinks={navLinks} />
-      <main className="pt-20"> {/* Padding top untuk menghindari konten tertutup navbar */}
-        {/* Bagian Hero */}
+      <main> {/* Dihilangkan padding-top karena hero section sudah memiliki padding-top implisit */}
         <HeroSection hero={hero} />
-        {/* Bagian Keunggulan */}
         <AdvantagesSection advantages={advantages} />
-        {/* Bagian Tentang Kami */}
         <AboutSection about={about} />
-        {/* Bagian Jam Operasional */}
         <ServiceHoursSection serviceHours={serviceHours} />
-        {/* Bagian Daftar Produk */}
         <ProductSection pricing={pricing} contactInfo={contact} />
-        {/* Bagian Testimoni */}
         <TestimonialSection testimonials={testimonials} />
-        {/* Bagian FAQ */}
         <FaqSection faq={faq} />
-        {/* Bagian Kontak */}
         <ContactSection contact={contact} />
       </main>
-      {/* Footer */}
       <Footer businessName={businessName} copyright={footer.copyright} />
-      {/* Tombol Mengambang (WhatsApp dan Scroll ke Atas) - Dihapus */}
+      {/* Tombol Mengambang ditambahkan di sini */}
+      <FloatingButtons whatsappNumber={contact.whatsappNumber} />
     </div>
   );
 };
