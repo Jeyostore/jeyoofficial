@@ -11,7 +11,7 @@ const MOCK_DATA = {
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
     imageUrl: "https://images.pexels.com/photos/2679501/pexels-photo-2679501.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", // Gambar baru yang lebih relevan
-    mobileImageUrl: "https://images.pexels.com/photos/4114133/pexels-photo-4114133.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1", // Gambar mobile baru
+    mobileImageUrl: "https://pin.it/580zpDKa2", // Gambar mobile baru
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
