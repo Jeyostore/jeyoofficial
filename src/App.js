@@ -3,15 +3,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShieldCheck, MapPin, Phone, Mail, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent, MessageCircle as WhatsAppIcon } from 'lucide-react';
 
 // Data Mockup untuk konten landing page
-// URL gambar hero diperbarui dengan gambar yang lebih relevan dengan produk makanan ringan.
+// URL gambar hero diperbarui dengan gambar dari pengguna.
 const MOCK_DATA = {
   businessName: "Jeyo Store Official",
   hero: {
     title: "Selamat Datang di Jeyo Store",
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://www.pexels.com/photo/silver-imac-displaying-collage-photos-1779487/", // Gambar baru yang lebih relevan
-    mobileImageUrl: "https://id.pinterest.com/pin/762797255686481213/", // Gambar mobile baru
+    imageUrl: "https://i.imgur.com/t0QsECb.jpeg", // <-- GAMBAR DIPERBARUI
+    mobileImageUrl: "https://i.imgur.com/KmF2fJT.jpeg", // <-- GAMBAR DIPERBARUI
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -751,7 +751,6 @@ const FloatingButtons = ({ whatsappNumber }) => {
         </div>
     );
 };
-
 
 // Komponen Utama Aplikasi
 const App = () => {
