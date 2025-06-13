@@ -10,8 +10,8 @@ const MOCK_DATA = {
     title: "Selamat Datang di Jeyo Store",
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://i.imgur.com/t0QsECb.jpeg", // <-- GAMBAR DESKTOP
-    mobileImageUrl: "https://i.imgur.com/KmF2fJT.jpeg", // <-- GAMBAR MOBILE
+    imageUrl: "https://images.pexels.com/photos/6077630/pexels-photo-6077630.jpeg", // <-- GAMBAR DESKTOP
+    mobileImageUrl: "https://images.pexels.com/photos/3756877/pexels-photo-3756877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // <-- GAMBAR MOBILE
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
