@@ -10,8 +10,8 @@ const MOCK_DATA = {
     title: "Selamat Datang di Jeyo Store",
     subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://i.imgur.com/t0QsECb.jpeg", // <-- GAMBAR DIPERBARUI
-    mobileImageUrl: "https://i.imgur.com/KmF2fJT.jpeg", // <-- GAMBAR DIPERBARUI
+    imageUrl: "https://i.imgur.com/t0QsECb.jpeg", // <-- GAMBAR DESKTOP
+    mobileImageUrl: "https://i.imgur.com/KmF2fJT.jpeg", // <-- GAMBAR MOBILE
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -280,47 +280,59 @@ const SectionWrapper = ({ children, id, className = '' }) => {
     );
 };
 
-// Komponen Hero Section
+// ===================================================================================
+// PERBAIKAN DIMULAI DI SINI: Komponen Hero Section
+// ===================================================================================
 const HeroSection = ({ hero }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [currentImageUrl, setCurrentImageUrl] = useState(hero.imageUrl);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Efek ini HANYA untuk menentukan apakah tampilan mobile atau tidak,
+  // dan hanya berjalan sekali saat komponen dimuat dan saat ukuran jendela berubah.
   useEffect(() => {
-    const handleScrollAndResize = () => {
-      setScrollPosition(window.scrollY);
-      if (window.innerWidth < 768 && hero.mobileImageUrl) {
-        setCurrentImageUrl(hero.mobileImageUrl);
-      } else {
-        setCurrentImageUrl(hero.imageUrl);
-      }
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener('scroll', handleScrollAndResize);
-    window.addEventListener('resize', handleScrollAndResize);
-    handleScrollAndResize();
-    return () => {
-      window.removeEventListener('scroll', handleScrollAndResize);
-      window.removeEventListener('resize', handleScrollAndResize);
+    checkDevice(); // Cek saat pertama kali render
+    window.addEventListener('resize', checkDevice);
+    
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  // Efek ini HANYA untuk mengelola efek parallax saat scroll.
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
     };
-  }, [hero.imageUrl, hero.mobileImageUrl]);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Tentukan URL gambar yang akan digunakan berdasarkan state isMobile.
+  const currentImageUrl = isMobile && hero.mobileImageUrl ? hero.mobileImageUrl : hero.imageUrl;
 
   return (
     <section  
       id="hero"  
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20 overflow-hidden"
+      // Hapus 'bg-fixed' jika di perangkat mobile untuk menghindari bug render.
+      // 'bg-scroll' adalah default, jadi gambar akan bergulir bersama halaman di mobile.
+      className={`min-h-screen flex items-center justify-center bg-cover bg-center relative pt-20 overflow-hidden ${isMobile ? 'bg-scroll' : 'bg-fixed'}`}
       style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${currentImageUrl})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
         <h1
           className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
-          style={{ transform: `translateY(${scrollPosition * 0.3}px)` }}
+          // Kurangi efek paralaks di seluler untuk performa yang lebih baik
+          style={{ transform: `translateY(${isMobile ? scrollPosition * 0.15 : scrollPosition * 0.3}px)` }}
         >
           {hero.title}
         </h1>
         <p
           className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300"
-          style={{ transform: `translateY(${scrollPosition * 0.2}px)` }}
+          style={{ transform: `translateY(${isMobile ? scrollPosition * 0.1 : scrollPosition * 0.2}px)` }}
         >
           {hero.subtitle}
         </p>
@@ -339,7 +351,7 @@ const HeroSection = ({ hero }) => {
             }
           }}
           className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
-          style={{ transform: `translateY(${scrollPosition * 0.1}px)` }}
+          // Hapus efek paralaks dari tombol untuk kesederhanaan
         >
           {hero.cta}
           <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
@@ -348,6 +360,10 @@ const HeroSection = ({ hero }) => {
     </section>
   );
 };
+// ===================================================================================
+// PERBAIKAN SELESAI
+// ===================================================================================
+
 
 // Bagian Keunggulan (Advantages Section)
 const AdvantagesSection = ({ advantages }) => (
@@ -467,7 +483,6 @@ const PriceCard = ({ item, contactInfo, index }) => {
             </svg>
           </div>
         )}
-        {/* ALT TEXT DIPERBARUI: Teks alternatif yang lebih deskriptif untuk aksesibilitas */}
         <img  
             src={item.imageUrl}  
             alt={`Gambar produk ${item.name} dari Jeyo Store`}
@@ -834,7 +849,7 @@ const App = () => {
       className="font-inter antialiased text-gray-800 min-h-screen bg-gray-50"
     >
       <Navbar businessName={businessName} navLinks={navLinks} />
-      <main> {/* Dihilangkan padding-top karena hero section sudah memiliki padding-top implisit */}
+      <main>
         <HeroSection hero={hero} />
         <AdvantagesSection advantages={advantages} />
         <AboutSection about={about} />
@@ -845,7 +860,6 @@ const App = () => {
         <ContactSection contact={contact} />
       </main>
       <Footer businessName={businessName} copyright={footer.copyright} />
-      {/* Tombol Mengambang ditambahkan di sini */}
       <FloatingButtons whatsappNumber={contact.whatsappNumber} />
     </div>
   );
