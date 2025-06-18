@@ -1,17 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
-// ReactDOM tidak digunakan, jadi impornya dihapus untuk menjaga kebersihan kode.
+// Impor untuk efek ketikan
+import { TypeAnimation } from 'react-type-animation';
 import { ShieldCheck, MapPin, Phone, Mail, Clock, ShoppingCart, ArrowRightCircle, CheckCircle, Instagram, Flame, Building, ShoppingBag, MessageSquare, PhoneCall, ChevronUp, HelpCircle, Star, ThumbsUp, Package, BadgePercent, MessageCircle as WhatsAppIcon } from 'lucide-react';
 
-// Data Mockup untuk konten landing page
-// URL gambar hero diperbarui dengan gambar dari pengguna.
+// ===================================================================================
+// PERUBAHAN 1: MOCK_DATA DITINGKATKAN
+// Menambahkan properti baru:
+// - Produk: 'tag' untuk label seperti "Terlaris".
+// - Testimoni: 'rating' untuk menampilkan bintang.
+// ===================================================================================
 const MOCK_DATA = {
   businessName: "Jeyo Store Official",
   hero: {
     title: "Selamat Datang di Jeyo Store",
-    subtitle: "Temukan makanan ringan lezat, cemilan pilihan, dan produk berkualitas terbaik khusus untuk Anda.",
+    // Subtitle akan dianimasikan dengan efek ketikan
+    animatedSubtitle: [
+      "Temukan makanan ringan lezat...",
+      2000,
+      "Cemilan pilihan untuk setiap momen...",
+      2000,
+      "Dan produk berkualitas terbaik untuk Anda.",
+      2000,
+    ],
     cta: "Jelajahi Produk Kami",
-    imageUrl: "https://images.pexels.com/photos/6077630/pexels-photo-6077630.jpeg", // <-- GAMBAR DESKTOP
-    mobileImageUrl: "https://images.pexels.com/photos/3756877/pexels-photo-3756877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // <-- GAMBAR MOBILE
+    imageUrl: "https://images.pexels.com/photos/6077630/pexels-photo-6077630.jpeg",
+    mobileImageUrl: "https://images.pexels.com/photos/3756877/pexels-photo-3756877.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
   },
   advantages: {
     title: "Mengapa Memilih Jeyo Store?",
@@ -48,14 +61,28 @@ const MOCK_DATA = {
     title: "Daftar Produk Unggulan",
     description: "Temukan berbagai pilihan makanan kami yang dirancang khusus untuk menemani setiap momen Anda. Harga transparan dan kualitas terdepan.",
     items: [
-      { id: 1, name: "Mie Lidi", description: "Mie lidi renyah dengan bumbu pedas manis yang bikin nagih.", imageUrl: "https://resepmamiku.com/wp-content/uploads/2022/05/mie-lidi-pedas-a-k-a-lidi-lidian-pedas-dapoerliandra-850x1063.jpg", features: ["Renyah", "Pedas Manis", "Populer"], flavors: ["Original", "Pedas Manis", "Extra Pedas", "Balado"],
+      { 
+        id: 1, 
+        name: "Mie Lidi", 
+        description: "Mie lidi renyah dengan bumbu pedas manis yang bikin nagih.", 
+        imageUrl: "https://resepmamiku.com/wp-content/uploads/2022/05/mie-lidi-pedas-a-k-a-lidi-lidian-pedas-dapoerliandra-850x1063.jpg", 
+        features: ["Renyah", "Pedas Manis"], 
+        tag: { text: "Terlaris!", color: "bg-orange-500" }, // Tag baru
+        flavors: ["Original", "Pedas Manis", "Extra Pedas", "Balado"],
         sizes: [
           { name: "Kecil (50gr)", price: "Rp 5.000" },
           { name: "Sedang (100gr)", price: "Rp 10.000" },
           { name: "Besar (250gr)", price: "Rp 20.000" },
         ]
       },
-      { id: 2, name: "Makaroni", description: "Makaroni dengan bumbu gurih, cocok untuk teman camilan.", imageUrl: "https://media.suara.com/pictures/970x544/2019/11/04/48703-makaroni-ngehe.jpg", features: ["Gurih", "Mengenyangkan"], flavors: ["Original", "Pedas", "Balado", "Keju"],
+      { 
+        id: 2, 
+        name: "Makaroni", 
+        description: "Makaroni dengan bumbu gurih, cocok untuk teman camilan.", 
+        imageUrl: "https://media.suara.com/pictures/970x544/2019/11/04/48703-makaroni-ngehe.jpg", 
+        features: ["Gurih", "Mengenyangkan"],
+        tag: { text: "Populer!", color: "bg-purple-600" }, // Tag baru
+        flavors: ["Original", "Pedas", "Balado", "Keju"],
         sizes: [
           { name: "Kecil (34gr)", price: "Rp 4.000" },
           { name: "Sedang (104gr)", price: "Rp 7.000" },
@@ -68,10 +95,10 @@ const MOCK_DATA = {
     title: "Apa Kata Pelanggan Kami?",
     description: "Dengarkan pengalaman nyata dari pelanggan setia Jeyo Store yang telah menikmati produk-produk berkualitas kami.",
     reviews: [
-      { id: 1, quote: "Mie Lidi Jeyo Store paling enak! Pedasnya pas, bikin nagih terus. Selalu jadi pilihan pertama saya.", author: "Prayoga Akbar", city: "Bogor", avatar: "https://i.pravatar.cc/150?u=prayoga" },
-      { id: 2, quote: "Makaroninya gurih banget, cocok buat teman ngopi sore. Anak-anak di rumah juga suka!", author: "Budi Santoso", city: "Jakarta", avatar: "https://i.pravatar.cc/150?u=budi" },
-      { id: 3, quote: "Pengemasannya rapi dan higienis. Produknya selalu fresh. Pelayanan juga cepat dan ramah.", author: "M Taufik", city: "Bandung", avatar: "https://i.pravatar.cc/150?u=taufik" },
-      { id: 4, quote: "Harga sangat terjangkau dengan kualitas premium. Mie Lidi Populer memang juara!", author: "Rudi Wijaya", city: "Yogyakarta", avatar: "https://i.pravatar.cc/150?u=rudi" },
+      { id: 1, quote: "Mie Lidi Jeyo Store paling enak! Pedasnya pas, bikin nagih terus. Selalu jadi pilihan pertama saya.", author: "Prayoga Akbar", city: "Bogor", avatar: "https://i.pravatar.cc/150?u=prayoga", rating: 5 },
+      { id: 2, quote: "Makaroninya gurih banget, cocok buat teman ngopi sore. Anak-anak di rumah juga suka!", author: "Budi Santoso", city: "Jakarta", avatar: "https://i.pravatar.cc/150?u=budi", rating: 5 },
+      { id: 3, quote: "Pengemasannya rapi dan higienis. Produknya selalu fresh. Pelayanan juga cepat dan ramah.", author: "M Taufik", city: "Bandung", avatar: "https://i.pravatar.cc/150?u=taufik", rating: 4 },
+      { id: 4, quote: "Harga sangat terjangkau dengan kualitas premium. Mie Lidi Populer memang juara!", author: "Rudi Wijaya", city: "Yogyakarta", avatar: "https://i.pravatar.cc/150?u=rudi", rating: 5 },
     ]
   },
   faq: {
@@ -111,10 +138,10 @@ const useSectionVisibility = (ref, threshold = 0.1) => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target); // Hentikan observasi setelah terlihat
+          observer.unobserve(entry.target);
         }
       },
-      { threshold } // Persentase bagian yang terlihat untuk memicu
+      { threshold }
     );
 
     const currentRef = ref.current;
@@ -124,7 +151,7 @@ const useSectionVisibility = (ref, threshold = 0.1) => {
 
     return () => {
       if (currentRef) {
-        observer.unobserve(currentRef); // Bersihkan observer saat komponen di-unmount
+        observer.unobserve(currentRef);
       }
     };
   }, [ref, threshold]);
@@ -132,12 +159,11 @@ const useSectionVisibility = (ref, threshold = 0.1) => {
   return isVisible;
 };
 
-// Komponen Navigasi
+// Komponen Navigasi (tidak ada perubahan signifikan)
 const Navbar = ({ businessName, navLinks }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('');
 
-  // Ikon yang sesuai untuk setiap tautan navigasi
   const linkIcons = {
     'Keunggulan': Star,
     'Tentang Kami': Building,
@@ -148,19 +174,16 @@ const Navbar = ({ businessName, navLinks }) => {
     'Jam Operasional': Clock,
   };
 
-  // Efek untuk menandai tautan navigasi aktif berdasarkan posisi scroll
   useEffect(() => {
     const handleScroll = () => {
       let currentSectionId = '';
-      const offset = window.innerHeight * 0.4; // Menentukan offset untuk aktivasi tautan
-      // Iterasi dari belakang untuk akurasi yang lebih baik saat scroll ke atas
+      const offset = window.innerHeight * 0.4;
       [...navLinks].reverse().forEach(link => { 
         const section = document.getElementById(link.href.substring(1));
         if (section && section.offsetTop <= window.scrollY + offset) {
           if (!currentSectionId) currentSectionId = link.href.substring(1);
         }
       });
-      // Set tautan aktif atau biarkan kosong jika di bagian atas halaman
       setActiveLink(currentSectionId || (window.scrollY < 200 ? '' : activeLink));
     };
 
@@ -169,16 +192,14 @@ const Navbar = ({ businessName, navLinks }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [navLinks, activeLink]);
 
-
-  // Fungsi untuk menangani klik tautan navigasi
   const handleNavClick = (href) => {
-    setIsOpen(false); // Tutup menu mobile setelah klik
+    setIsOpen(false);
     const element = document.getElementById(href.substring(1));
     if (element) {
-      const navbarHeight = document.querySelector('nav')?.offsetHeight || 70; // Dapatkan tinggi navbar
+      const navbarHeight = document.querySelector('nav')?.offsetHeight || 70;
       const elementPosition = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
-        top: elementPosition - navbarHeight - 20, // Offset agar tidak tertutup navbar
+        top: elementPosition - navbarHeight - 20,
         behavior: 'smooth'
       });
     }
@@ -188,18 +209,16 @@ const Navbar = ({ businessName, navLinks }) => {
     <nav className="bg-white/80 backdrop-blur-md shadow-lg fixed w-full top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo Bisnis */}
           <div className="flex items-center">
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="text-xl md:text-2xl font-extrabold flex items-center group"
             >
-              <Flame className="w-8 h-8 mr-2 text-blue-500" />
+              <Flame className="w-8 h-8 mr-2 text-orange-500" />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600">{businessName}</span>
             </a>
           </div>
-          {/* Tautan Navigasi Desktop */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-1 lg:space-x-2">
               {navLinks.map((link) => {
@@ -218,14 +237,12 @@ const Navbar = ({ businessName, navLinks }) => {
                   >
                     {IconComponent && <IconComponent className={`w-4 h-4 mr-2 transition-colors ${isActive ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} />}
                     {link.name}
-                    {/* Indikator aktif/hover di bawah teks */}
                     <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-0.5 bg-indigo-600 transform transition-all duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
                   </a>
                 );
               })}
             </div>
           </div>
-          {/* Tombol Hamburger Mobile */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -239,7 +256,6 @@ const Navbar = ({ businessName, navLinks }) => {
           </div>
         </div>
       </div>
-      {/* Menu Mobile */}
       {isOpen && (
         <div className="md:hidden bg-white shadow-lg rounded-b-lg">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -268,74 +284,64 @@ const Navbar = ({ businessName, navLinks }) => {
   );
 };
 
-// Komponen Pembungkus Bagian dengan efek animasi
-const SectionWrapper = ({ children, id, className = '' }) => {
+// Pembungkus bagian dengan judul yang diperbarui
+const SectionWrapper = ({ children, id, className = '', title }) => {
     const sectionRef = useRef(null);
     const isVisible = useSectionVisibility(sectionRef);
 
     return (
-        <section id={id} ref={sectionRef} className={`py-12 sm:py-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}>
-            {children}
+        <section id={id} ref={sectionRef} className={`py-16 sm:py-24 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${className}`}>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              {title && (
+                 <div className="text-center mb-12 sm:mb-16">
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-purple-600 mb-4">{title}</h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto rounded-full"></div>
+                </div>
+              )}
+              {children}
+            </div>
         </section>
     );
 };
 
 // ===================================================================================
-// PERBAIKAN DIMULAI DI SINI: Komponen Hero Section
+// PERUBAHAN 2: HERO SECTION DENGAN EFEK KETIKAN
+// Mengganti subtitle statis dengan komponen TypeAnimation.
 // ===================================================================================
 const HeroSection = ({ hero }) => {
-  const [scrollPosition, setScrollPosition] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Efek ini HANYA untuk menentukan apakah tampilan mobile atau tidak,
-  // dan hanya berjalan sekali saat komponen dimuat dan saat ukuran jendela berubah.
   useEffect(() => {
-    const checkDevice = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkDevice(); // Cek saat pertama kali render
+    const checkDevice = () => setIsMobile(window.innerWidth < 768);
+    checkDevice();
     window.addEventListener('resize', checkDevice);
-    
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
-  // Efek ini HANYA untuk mengelola efek parallax saat scroll.
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Tentukan URL gambar yang akan digunakan berdasarkan state isMobile.
   const currentImageUrl = isMobile && hero.mobileImageUrl ? hero.mobileImageUrl : hero.imageUrl;
 
   return (
     <section  
       id="hero"  
-      // Hapus 'bg-fixed' jika di perangkat mobile untuk menghindari bug render.
-      // 'bg-scroll' adalah default, jadi gambar akan bergulir bersama halaman di mobile.
-      className={`min-h-screen flex items-center justify-center bg-cover bg-center relative pt-20 overflow-hidden ${isMobile ? 'bg-scroll' : 'bg-fixed'}`}
-      style={{ backgroundImage: `linear-gradient(rgba(74,85,162,0.6), rgba(106,117,201,0.4)), url(${currentImageUrl})` }}
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative pt-20 overflow-hidden"
+      style={{ backgroundImage: `linear-gradient(rgba(26,32,44,0.7), rgba(49,57,75,0.6)), url(${currentImageUrl})` }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent"></div>
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center text-white z-10">
         <h1
-          className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
-          // Kurangi efek paralaks di seluler untuk performa yang lebih baik
-          style={{ transform: `translateY(${isMobile ? scrollPosition * 0.15 : scrollPosition * 0.3}px)` }}
+          className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight animate-hero-fade-in-down"
         >
           {hero.title}
         </h1>
-        <p
-          className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-hero-fade-in-up animation-delay-300"
-          style={{ transform: `translateY(${isMobile ? scrollPosition * 0.1 : scrollPosition * 0.2}px)` }}
-        >
-          {hero.subtitle}
-        </p>
+        <div className="text-base sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto h-16 sm:h-auto">
+          <TypeAnimation
+            sequence={hero.animatedSubtitle}
+            wrapper="p"
+            speed={50}
+            className="animate-hero-fade-in-up animation-delay-300"
+            repeat={Infinity}
+          />
+        </div>
         <a
           href="#daftar-produk"  
           onClick={(e) => {
@@ -350,8 +356,7 @@ const HeroSection = ({ hero }) => {
               });
             }
           }}
-          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
-          // Hapus efek paralaks dari tombol untuk kesederhanaan
+          className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-3 px-8 sm:py-4 sm:px-10 rounded-lg text-lg shadow-xl transform hover:scale-105 transition-all duration-300 animate-hero-fade-in-up animation-delay-600 inline-flex items-center group"
         >
           {hero.cta}
           <ArrowRightCircle className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
@@ -360,94 +365,75 @@ const HeroSection = ({ hero }) => {
     </section>
   );
 };
-// ===================================================================================
-// PERBAIKAN SELESAI
-// ===================================================================================
 
-
-// Bagian Keunggulan (Advantages Section)
+// Bagian Keunggulan
 const AdvantagesSection = ({ advantages }) => (
-    <SectionWrapper id="keunggulan" className="bg-white bg-dots-pattern">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{advantages.title}</h2>
-                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {advantages.items.map((item, index) => (
-                    <div
-                        key={index}
-                        className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
-                        style={{ animationDelay: `${index * 0.15}s` }}
-                    >
-                        <div className="inline-block p-4 bg-indigo-100 rounded-full mb-4">
-                            <item.icon className="w-8 h-8 text-indigo-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
-                        <p className="text-gray-600 text-sm">{item.description}</p>
+    <SectionWrapper id="keunggulan" className="bg-slate-50" title={advantages.title}>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {advantages.items.map((item, index) => (
+                <div
+                    key={index}
+                    className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animated-item"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                >
+                    <div className="inline-block p-4 bg-indigo-100 rounded-full mb-4">
+                        <item.icon className="w-8 h-8 text-indigo-600" />
                     </div>
-                ))}
-            </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                </div>
+            ))}
         </div>
     </SectionWrapper>
 );
 
-
-// Bagian Tentang Kami (About Section)
+// Bagian Tentang Kami
 const AboutSection = ({ about }) => (
-    <SectionWrapper id="tentang-kami" className="bg-slate-50 bg-lines-pattern">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{about.title}</h2>
-                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-            </div>
-            <div className="max-w-3xl mx-auto text-gray-700 text-base md:text-lg leading-relaxed">
-                <p className="mb-6 whitespace-pre-line text-center md:text-left">{about.description1}</p>
-                <p className="mb-4 whitespace-pre-line text-center md:text-left">{about.description2Intro}</p>
-                <ul className="mb-6 space-y-3 pl-0">
-                {about.commitments.map((commitment, index) => (
-                    <li key={index} className="flex items-start animated-item" style={{ animationDelay: `${index * 0.1}s` }}>
-                    <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
-                    <span>{commitment}</span>
-                    </li>
-                ))}
-                </ul>
-                <p className="whitespace-pre-line text-center md:text-left">{about.closingStatement}</p>
-            </div>
+    <SectionWrapper id="tentang-kami" className="bg-white" title={about.title}>
+        <div className="max-w-3xl mx-auto text-gray-700 text-base md:text-lg leading-relaxed">
+            <p className="mb-6 whitespace-pre-line text-center">{about.description1}</p>
+            <p className="mb-4 whitespace-pre-line text-center">{about.description2Intro}</p>
+            <ul className="mb-6 space-y-3 pl-0">
+            {about.commitments.map((commitment, index) => (
+                <li key={index} className="flex items-start animated-item" style={{ animationDelay: `${index * 0.1}s` }}>
+                <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
+                <span>{commitment}</span>
+                </li>
+            ))}
+            </ul>
+            <p className="whitespace-pre-line text-center">{about.closingStatement}</p>
         </div>
     </SectionWrapper>
 );
 
 // Komponen Jam Operasional
 const ServiceHoursSection = ({ serviceHours }) => (
-  <SectionWrapper id="jam-operasional" className="bg-white bg-dots-pattern">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12 sm:mb-16">
-        <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{serviceHours.title}</h2>
-        <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-      </div>
-      <div className="max-w-2xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden p-8 animated-item">
-        <ul className="space-y-4">
-          {serviceHours.schedule.map((entry, index) => (
-            <li key={index} className={`flex justify-between items-center text-base md:text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`}
-                style={{ animationDelay: `${0.1 + index * 0.1}s` }}>
-              <span className="flex items-center">
-                <Clock className="w-6 h-6 mr-3 text-indigo-500" />
-                {entry.day}
-              </span>
-              <span>{entry.time}</span>
-            </li>
-          ))}
-        </ul>
-        {serviceHours.note && (
-          <p className="text-sm text-gray-500 mt-6 text-center italic animated-item" style={{ animationDelay: `${0.1 + serviceHours.schedule.length * 0.1}s` }}>{serviceHours.note}</p>
-        )}
-      </div>
+  <SectionWrapper id="jam-operasional" className="bg-slate-50" title={serviceHours.title}>
+    <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8 animated-item">
+      <ul className="space-y-4">
+        {serviceHours.schedule.map((entry, index) => (
+          <li key={index} className={`flex justify-between items-center text-base md:text-lg animated-item-right ${entry.isClosed ? 'text-red-600 font-semibold' : 'text-gray-700'}`}
+              style={{ animationDelay: `${0.1 + index * 0.1}s` }}>
+            <span className="flex items-center">
+              <Clock className="w-6 h-6 mr-3 text-indigo-500" />
+              {entry.day}
+            </span>
+            <span>{entry.time}</span>
+          </li>
+        ))}
+      </ul>
+      {serviceHours.note && (
+        <p className="text-sm text-gray-500 mt-6 text-center italic animated-item" style={{ animationDelay: `${0.1 + serviceHours.schedule.length * 0.1}s` }}>{serviceHours.note}</p>
+      )}
     </div>
   </SectionWrapper>
 );
 
-// Komponen Kartu Produk
+// ===================================================================================
+// PERUBAHAN 3: KARTU PRODUK DENGAN TAG BARU & EFEK HOVER
+// Menampilkan tag (mis. "Terlaris") dengan warna kustom.
+// Menambahkan filter brightness saat gambar di-hover.
+// ===================================================================================
 const PriceCard = ({ item, contactInfo, index }) => {
   const [selectedSize, setSelectedSize] = useState(item.sizes ? item.sizes[0] : null);
 
@@ -477,23 +463,20 @@ const PriceCard = ({ item, contactInfo, index }) => {
       <div className="relative h-56 group">
         {!isImageLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse rounded-t-xl">
-            <svg className="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <ShoppingCart className="h-10 w-10 text-gray-400" />
           </div>
         )}
         <img  
             src={item.imageUrl}  
             alt={`Gambar produk ${item.name} dari Jeyo Store`}
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${isImageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:filter group-hover:brightness-110 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setIsImageLoaded(true)}
             onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src="https://placehold.co/600x400/FFCDD2/B71C1C?text=Gagal+Muat&font=inter"; }}
         />
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-opacity duration-300"></div>
-        {item.features && item.features.includes("Populer") && (
-            <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
-                Populer!
+        {item.tag && (
+            <div className={`absolute top-0 right-0 ${item.tag.color} text-white text-xs font-semibold px-3 py-1 rounded-bl-lg`}>
+                {item.tag.text}
             </div>
         )}
       </div>
@@ -506,9 +489,7 @@ const PriceCard = ({ item, contactInfo, index }) => {
             <p className="text-xs font-semibold text-purple-600 mb-2">Varian Rasa:</p>
             <div className="flex flex-wrap gap-2">
               {item.flavors.map((flavor, idx) => (
-                <span key={idx} className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full flex items-center">
-                  {flavor}
-                </span>
+                <span key={idx} className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">{flavor}</span>
               ))}
             </div>
           </div>
@@ -522,11 +503,7 @@ const PriceCard = ({ item, contactInfo, index }) => {
               onChange={(e) => setSelectedSize(item.sizes.find(s => s.name === e.target.value))}
               className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              {item.sizes.map((size, idx) => (
-                <option key={idx} value={size.name}>
-                  {size.name}
-                </option>
-              ))}
+              {item.sizes.map((size, idx) => (<option key={idx} value={size.name}>{size.name}</option>))}
             </select>
           </div>
         )}
@@ -545,63 +522,61 @@ const PriceCard = ({ item, contactInfo, index }) => {
   );
 };
 
-// Bagian Daftar Produk (Product Section)
+// Bagian Daftar Produk
 const ProductSection = ({ pricing, contactInfo }) => (
-    <SectionWrapper id="daftar-produk" className="bg-slate-50 bg-dots-pattern">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{pricing.title}</h2>
-                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-                <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8 sm:gap-10 justify-center max-w-4xl mx-auto">
-                {pricing.items.map((item, index) => (
-                    <PriceCard key={item.id} item={item} contactInfo={contactInfo} index={index} />
-                ))}
-            </div>
-        </div>
-    </SectionWrapper>
-);
-
-// Bagian Testimoni
-const TestimonialSection = ({ testimonials }) => (
-    <SectionWrapper id="testimoni" className="bg-white bg-lines-pattern">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{testimonials.title}</h2>
-            <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8 sm:gap-10">
-            {testimonials.reviews.map((review, index) => (
-                <div
-                    key={review.id}
-                    className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 animated-item"
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                >
-                    <p className="text-base md:text-lg italic mb-4 flex-grow">"{review.quote}"</p>
-                    <div className="font-semibold text-indigo-700 mt-auto">{review.author}</div>
-                    <div className="text-sm text-gray-500">{review.city}</div>
-                </div>
+    <SectionWrapper id="daftar-produk" className="bg-white" title={pricing.title}>
+        <p className="text-center mt-[-3rem] mb-12 max-w-2xl mx-auto text-lg text-gray-600">{pricing.description}</p>
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-10 justify-center max-w-4xl mx-auto">
+            {pricing.items.map((item, index) => (
+                <PriceCard key={item.id} item={item} contactInfo={contactInfo} index={index} />
             ))}
-            </div>
         </div>
     </SectionWrapper>
 );
 
+// Komponen baru untuk rating bintang
+const StarRating = ({ rating }) => (
+  <div className="flex justify-center items-center">
+    {[...Array(5)].map((_, index) => (
+      <Star
+        key={index}
+        className={`w-5 h-5 ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+        fill={index < rating ? 'currentColor' : 'none'}
+      />
+    ))}
+  </div>
+);
 
-// Komponen FAQ Item
+// ===================================================================================
+// PERUBAHAN 4: BAGIAN TESTIMONI DENGAN RATING BINTANG
+// Mengintegrasikan komponen StarRating ke dalam kartu testimoni.
+// ===================================================================================
+const TestimonialSection = ({ testimonials }) => (
+    <SectionWrapper id="testimoni" className="bg-slate-50" title={testimonials.title}>
+        <p className="text-center mt-[-3rem] mb-12 max-w-2xl mx-auto text-lg text-gray-600">{testimonials.description}</p>
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-10">
+        {testimonials.reviews.map((review, index) => (
+            <div
+                key={review.id}
+                className="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 animated-item"
+                style={{ animationDelay: `${index * 0.15}s` }}
+            >
+                <StarRating rating={review.rating} />
+                <p className="text-base md:text-lg italic my-4 flex-grow">"{review.quote}"</p>
+                <div className="font-semibold text-indigo-700 mt-auto">{review.author}</div>
+                <div className="text-sm text-gray-500">{review.city}</div>
+            </div>
+        ))}
+        </div>
+    </SectionWrapper>
+);
+
+// Komponen FAQ (tidak ada perubahan signifikan)
 const FaqItem = ({ item, index }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div
-            className="border-b animated-item"
-            style={{ animationDelay: `${index * 0.1}s` }}
-        >
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex justify-between items-center text-left py-5 px-6 focus:outline-none"
-            >
+        <div className="border-b animated-item" style={{ animationDelay: `${index * 0.1}s` }}>
+            <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center text-left py-5 px-6 focus:outline-none">
                 <span className="text-base md:text-lg font-medium text-gray-800">{item.q}</span>
                 <ChevronUp className={`w-5 h-5 text-indigo-500 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -611,89 +586,43 @@ const FaqItem = ({ item, index }) => {
         </div>
     );
 };
-
-// Bagian FAQ
 const FaqSection = ({ faq }) => (
-    <SectionWrapper id="faq" className="bg-slate-50 bg-dots-pattern">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12 sm:mb-16">
-                <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">{faq.title}</h2>
-                <div className="w-24 h-1 bg-indigo-600 mx-auto rounded-full"></div>
-            </div>
-            <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-                {faq.items.map((item, index) => (
-                    <FaqItem key={index} item={item} index={index} />
-                ))}
-            </div>
+    <SectionWrapper id="faq" className="bg-white" title={faq.title}>
+        <div className="max-w-3xl mx-auto bg-slate-50 rounded-xl shadow-lg overflow-hidden">
+            {faq.items.map((item, index) => (<FaqItem key={index} item={item} index={index} />))}
         </div>
     </SectionWrapper>
 );
 
-
-// Bagian Kontak
+// Bagian Kontak (tidak ada perubahan signifikan)
 const ContactSection = ({ contact }) => (
-    <SectionWrapper id="kontak">
+    <section id="kontak">
         <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white py-16 sm:py-24">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
-                    <h2 className="text-2xl sm:text-4xl font-bold mb-4">{contact.title}</h2>
-                    <div className="w-24 h-1 bg-indigo-400 mx-auto rounded-full"></div>
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">Hubungi Kami</h2>
+                    <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
                 </div>
                 <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-x-8 gap-y-12 items-center">
-                    <div
-                        className="space-y-6 text-center md:text-left animated-item-right"
-                        style={{ animationDelay: `0s` }}
-                    >
-                        {/* Alamat, Telepon, Email, Instagram */}
-                         <div className="flex items-center justify-center md:justify-start">
-                             <MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
-                             <p className="text-indigo-100">{contact.address}</p>
-                         </div>
-                         <div className="flex items-center justify-center md:justify-start">
-                             <Phone className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
-                             <a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a>
-                         </div>
-                         <div className="flex items-center justify-center md:justify-start">
-                             <Mail className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
-                             <a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a>
-                         </div>
-                         <div className="flex items-center justify-center md:justify-start">
-                              <Instagram className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" />
-                              <a href={contact.instagramLink} target="_blank" rel="noopener noreferrer" className="text-indigo-100 hover:text-white transition-colors hover:underline">@{contact.instagramUsername}</a>
-                         </div>
+                    <div className="space-y-6 text-center md:text-left animated-item-right">
+                         <div className="flex items-center justify-center md:justify-start"><MapPin className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /><p className="text-indigo-100">{contact.address}</p></div>
+                         <div className="flex items-center justify-center md:justify-start"><Phone className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /><a href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.phone}</a></div>
+                         <div className="flex items-center justify-center md:justify-start"><Mail className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /><a href={`mailto:${contact.email}`} className="text-indigo-100 hover:text-white transition-colors hover:underline">{contact.email}</a></div>
+                         <div className="flex items-center justify-center md:justify-start"><Instagram className="w-6 h-6 mr-3 text-indigo-200 flex-shrink-0" /><a href={contact.instagramLink} target="_blank" rel="noopener noreferrer" className="text-indigo-100 hover:text-white transition-colors hover:underline">@{contact.instagramUsername}</a></div>
                     </div>
-                    {/* Tombol Chat WhatsApp */}
-                    <div
-                        className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item"
-                        style={{ animationDelay: `0.15s` }}
-                    >
+                    <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-xl text-center animated-item">
                         <h3 className="text-xl md:text-2xl font-semibold mb-4 text-white">Ada Pertanyaan?</h3>
                         <p className="text-indigo-200 mb-6">Hubungi kami langsung di WhatsApp!</p>
-                        <a
-                            href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20tertarik%20dengan%20produk%20Anda.`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg"
-                        >
-                            Chat di WhatsApp
-                        </a>
+                        <a href={`https://wa.me/${contact.whatsappNumber}?text=Halo%20Jeyo%20Store,%20saya%20tertarik%20dengan%20produk%20Anda.`} target="_blank" rel="noopener noreferrer" className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 text-lg">Chat di WhatsApp</a>
                     </div>
                 </div>
-                {/* Tautan E-commerce */}
                 {contact.eCommerceLinks && contact.eCommerceLinks.length > 0 && (
                     <div className="mt-16 text-center">
                       <h3 className="text-xl md:text-2xl font-semibold mb-6 text-white animated-item" style={{ animationDelay: `0.3s` }}>Temukan Kami di E-commerce!</h3>
                       <div className="flex flex-wrap justify-center gap-6">
                         {contact.eCommerceLinks.map((platform, index) => (
-                          <a
-                            key={platform.name}
-                            href={platform.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center p-4 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 text-white transition-colors transform hover:scale-105 animated-item"
-                            style={{ animationDelay: `${0.4 + index * 0.1}s` }}
-                          >
-                            <ShoppingCart className={`w-8 h-8 mr-3 text-white`} /> 
+                          <a key={platform.name} href={platform.url} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-white/20 rounded-lg shadow-md hover:bg-white/30 text-white transition-colors transform hover:scale-105 animated-item" style={{ animationDelay: `${0.4 + index * 0.1}s` }}>
+                            <ShoppingCart className={`w-8 h-8 mr-3`} /> 
                             <span className="font-medium text-base md:text-lg">{platform.name}</span>
                           </a>
                         ))}
@@ -702,10 +631,10 @@ const ContactSection = ({ contact }) => (
                 )}
             </div>
         </div>
-    </SectionWrapper>
+    </section>
 );
 
-// Footer
+// Footer (tidak ada perubahan signifikan)
 const Footer = ({ businessName, copyright }) => (
   <footer className="bg-gray-800 text-gray-400 py-8">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -715,26 +644,19 @@ const Footer = ({ businessName, copyright }) => (
   </footer>
 );
 
-// FITUR BARU: Tombol Aksi Mengambang (Scroll to Top & WhatsApp)
+// ===================================================================================
+// PERUBAHAN 5: TOMBOL MENGAMBANG DENGAN LABEL HOVER
+// Menambahkan label teks yang muncul saat tombol di-hover.
+// ===================================================================================
 const FloatingButtons = ({ whatsappNumber }) => {
     const [isVisible, setIsVisible] = useState(false);
 
-    // Tampilkan tombol setelah scroll melewati 400px
     const toggleVisibility = () => {
-        if (window.pageYOffset > 400) {
-            setIsVisible(true);
-        } else {
-            setIsVisible(false);
-        }
+        if (window.pageYOffset > 400) setIsVisible(true);
+        else setIsVisible(false);
     };
 
-    // Scroll ke atas halaman
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    };
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
     useEffect(() => {
         window.addEventListener('scroll', toggleVisibility);
@@ -745,24 +667,32 @@ const FloatingButtons = ({ whatsappNumber }) => {
 
     return (
         <div className={`fixed bottom-5 right-5 z-50 flex flex-col items-center gap-3 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-             {/* Tombol WhatsApp */}
-            <a 
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transform hover:scale-110 transition-all duration-200 animate-pulse-effect"
-              aria-label="Chat di WhatsApp"
-            >
-                <WhatsAppIcon className="h-6 w-6" />
-            </a>
-            {/* Tombol Scroll ke Atas */}
-            <button
-                onClick={scrollToTop}
-                className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 transform hover:scale-110 transition-all duration-200"
-                aria-label="Kembali ke atas"
-            >
-                <ChevronUp className="h-6 w-6" />
-            </button>
+            <div className="group relative flex items-center">
+                <a 
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 focus:outline-none transform hover:scale-110 transition-all duration-200"
+                  aria-label="Chat di WhatsApp"
+                >
+                    <WhatsAppIcon className="h-6 w-6" />
+                </a>
+                <span className="absolute right-full mr-4 px-2 py-1 bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Chat WhatsApp
+                </span>
+            </div>
+            <div className="group relative flex items-center">
+                <button
+                    onClick={scrollToTop}
+                    className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 focus:outline-none transform hover:scale-110 transition-all duration-200"
+                    aria-label="Kembali ke atas"
+                >
+                    <ChevronUp className="h-6 w-6" />
+                </button>
+                <span className="absolute right-full mr-4 px-2 py-1 bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Ke Atas
+                </span>
+            </div>
         </div>
     );
 };
@@ -780,15 +710,11 @@ const App = () => {
     { name: 'Kontak', href: '#kontak' },
   ];
 
-  // Mengaktifkan smooth scroll untuk seluruh halaman
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth';
-    return () => {
-      document.documentElement.style.scrollBehavior = 'auto';
-    };
+    return () => { document.documentElement.style.scrollBehavior = 'auto'; };
   }, []);
 
-  // Memasukkan keyframes CSS untuk animasi ke dalam DOM
   useEffect(() => {
     const styleId = 'custom-animations-style';
     let styleElement = document.getElementById(styleId);
@@ -799,42 +725,18 @@ const App = () => {
       document.head.appendChild(styleElement);
     }
     
-    // Keyframes animasi dan kelas Tailwind kustom
     styleElement.textContent = `
-      @keyframes heroFadeInDown { 0% { opacity: 0; transform: translateY(-30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-      @keyframes heroFadeInUp { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+      @keyframes heroFadeInDown { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes heroFadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+      .animate-hero-fade-in-down { animation: heroFadeInDown 1s ease-out forwards; }
+      .animate-hero-fade-in-up { animation: heroFadeInUp 1s ease-out forwards; }
       
-      .animate-hero-fade-in-down { animation: heroFadeInDown 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
-      .animate-hero-fade-in-up { animation: heroFadeInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
-
-      @keyframes slideInUpStaggered { 0% { opacity: 0; transform: translateY(50px); } 100% { opacity: 1; transform: translateY(0); } }
-      @keyframes slideInRightStaggered { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
-      
+      @keyframes slideInUpStaggered { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+      @keyframes slideInRightStaggered { 0% { opacity: 0; transform: translateX(-40px); } 100% { opacity: 1; transform: translateX(0); } }
       .animation-delay-300 { animation-delay: 0.3s; }
       .animation-delay-600 { animation-delay: 0.6s; }
-
-      .animated-item {
-        opacity: 0;
-        animation: slideInUpStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      }
-      .animated-item-right {
-        opacity: 0;
-        animation: slideInRightStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      }
-      @keyframes pulseEffect { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); } }
-      .animate-pulse-effect {
-        animation: pulseEffect 2s infinite ease-in-out;
-      }
-      .bg-dots-pattern {
-        background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-        background-size: 20px 20px;
-        background-position: 0 0;
-      }
-      .bg-lines-pattern {
-        background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-        background-size: 20px 20px;
-        background-position: 0 0;
-      }
+      .animated-item { animation: slideInUpStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
+      .animated-item-right { animation: slideInRightStaggered 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; }
     `;
     
     return () => {
@@ -845,9 +747,8 @@ const App = () => {
 
 
   return (
-    <div
-      className="font-inter antialiased text-gray-800 min-h-screen bg-gray-50"
-    >
+    <div className="font-inter antialiased text-gray-800 min-h-screen bg-slate-50">
+      {/* PENGINGAT SEO: Pastikan untuk menambahkan tag <title> dan <meta name="description"> di file index.html Anda untuk hasil pencarian yang lebih baik! */}
       <Navbar businessName={businessName} navLinks={navLinks} />
       <main>
         <HeroSection hero={hero} />
